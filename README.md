@@ -1,3 +1,14 @@
+Get the extension on:
+
+[![Badge Chrome]][Chrome]
+
+[Chrome]: https://chromewebstore.google.com/detail/no-google-search-translat/kdibhchppeokcmdamhekocbnkjkodoii
+[Badge Chrome]: https://img.shields.io/chrome-web-store/rating/kdibhchppeokcmdamhekocbnkjkodoii?style=for-the-badge&label=Chrome
+
+Pending validation for Firefox, Edge and Opera.
+
+<hr>
+
 ![Extension logo](assets/icon.png "Nice logo.")
 **No Google Search Auto Translation** is a browser extension that remove the auto translation feature of Google Search. It also detect the Google Translate proxy and redirect you to the original page.
 
