@@ -195,7 +195,7 @@ export const config: PlasmoCSConfig = {
 
 const cleanResult = (resultDiv: HTMLDivElement): Promise<void> => {
     return new Promise<void>((resolve) => {
-        const seeOriginalButton: HTMLSpanElement = resultDiv.querySelector<HTMLSpanElement>('span[role=button][tabindex="0"]:not([aria-label="Fermer"])');
+        const seeOriginalButton: HTMLSpanElement = resultDiv.querySelector<HTMLSpanElement>('span[role=button][tabindex="0"]:not([aria-label="Fermer"]):not(.ub-button)');
 
         /* A div added between "normal" results lines.
         If there is no button, nothing to do. 
