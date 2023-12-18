@@ -1,22 +1,22 @@
-Get the extension on:
-
-[![Badge Chrome]][Chrome]
-
-[Chrome]: https://chromewebstore.google.com/detail/no-google-search-translat/kdibhchppeokcmdamhekocbnkjkodoii
-[Badge Chrome]: https://img.shields.io/chrome-web-store/rating/kdibhchppeokcmdamhekocbnkjkodoii?style=for-the-badge&label=Chrome
-
-Pending validation for Firefox, Edge and Opera.
-
-<hr>
+[![Badge Firefox]][Firefox] [![Badge Chrome]][Chrome]
 
 ![Extension logo](assets/icon.png "Nice logo.")
 **No Google Search Auto Translation** is a browser extension that remove the auto translation feature of Google Search. It also detect the Google Translate proxy and redirect you to the original page.
 
-![Screenshot of the extension in action](assets/be-gone.webp "Be gone Google Translated results!")
+Pending validation for Edge and Opera extensions stores. Using Edge, Bravo, Vivaldi or Opera, you should be able to install it from the Chrome Webstore.
+
+[Chrome]: https://chromewebstore.google.com/detail/no-google-search-translat/kdibhchppeokcmdamhekocbnkjkodoii
+[Badge Chrome]: https://img.shields.io/chrome-web-store/rating/kdibhchppeokcmdamhekocbnkjkodoii?label=Chrome%20(and%20co.)&style=for-the-badge&logo=google-chrome&logoColor=white
+[Firefox]: https://addons.mozilla.org/fr/firefox/addon/no-google-search-translation/
+[Badge Firefox]: https://img.shields.io/amo/rating/no-google-search-translation?label=Firefox&style=for-the-badge&logo=firefoxbrowser&logoColor=white
+
+# Showcase
+
+![Screenshot of the extension in action](assets/showcase-1.jpg "Be gone Google Translated results!")
 
 Bonus on Firefox: it cleans the tab's navigation history to prevent the back button to redirect you to the Google Translate proxy.
 
-## Context
+# Context
 
 > To help address content and perspective gaps when a user searches in their local language, sometimes Google may translate the title link and snippet of a search result for results that aren't in the language of the search query, when available.
 > https://developers.google.com/search/docs/appearance/translated-results
@@ -29,11 +29,13 @@ There is no easy way to just disable this feature, so this extension is here to 
 
 I don't know! This fix is hacky, the extension is heavily relying on the structure of the Google Search page. If Google change it, the extension will not work anymore. If you find a bug, please open an issue. Or even a pull request! Then hope for a quick new release.
 
-## Development
+It might also be linked to cross-extensions incompatibilities, please report any.
+
+# Development
 
 First, you need to install [pnpm](https://pnpm.io/) (or npm *ewh!*) and run `pnpm install` (or `npm install`) to install all dependencies.
 
-### Commands
+## Commands
 
 | Command                                                       | Action                                                                                                            |
 | :------------------------------------------------------------ | :---------------------------------------------------------------------------------------------------------------- |
@@ -43,7 +45,7 @@ First, you need to install [pnpm](https://pnpm.io/) (or npm *ewh!*) and run `pnp
 
 Currently, the extension is only tested on Firefox and Edge. It should work on every Chromium-browser. There is no extension for Safary because I can't test it. If you want to add support for it, feel free to open a pull request.
 
-### Testing with side-loading
+## Testing with side-loading
 
 To live test the code, open your browser and load the appropriate development build. For example, if you are developing for Edge, using manifest v3, use: `build/edge-mv3-dev`. For Firefox, use `build/firefox-mv2-dev`.
 
@@ -53,9 +55,9 @@ Here the official documentation pages for the steps to follow:
 
 And [here](https://docs.plasmo.com/framework/workflows/dev) some details from Plasmo framework documentation.
 
-## Alternatives
+# Alternatives
 
-### Privacy and search engines
+## Privacy and search engines
 
 Google Search is not the only search engine on the web If you are concerned about your privacy, you could use:
 - [DuckDuckGo](https://duckduckgo.com/);
@@ -68,8 +70,8 @@ Google Search is not the only search engine on the web If you are concerned abou
 
 Some are using Google Search results (like Startpage), others build their own index (like DuckDuckGo), some are mixing. You can find more information on [PrivacyTools.io](https://www.privacytools.io/providers/search-engines/).
 
-### User script
+## User script
 
-If fore some reasons, you don't like browser extension (or just mine!), you can use [this user script](https://support.google.com/websearch/thread/248354054?hl=en&msgid=248372536) made by David Trapp.
+If fore some reasons, you don't like browsers extensions (or just mine!), you can use [this user script](https://support.google.com/websearch/thread/248354054?hl=en&msgid=248372536) made by David Trapp.
 
 Note that the text `Original ansehen` needs to be changed based on what language the results are translated to as stated by the user script author. Also, you might want to change the `@match` value to `https://www.google.*/*` to make it work on all Google Search domains. The script is not bypassing the Google Translate proxy, so you will still be redirected to the Goole translated page.
