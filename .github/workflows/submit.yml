@@ -37,11 +37,11 @@ jobs:
         run: | 
           pnpm build --target=chrome-mv3 --zip
           mv build/chrome-mv3-prod.zip chromium-addon-${{ steps.package-version.outputs.current-version }}.zip
-      - name: Browser Platform Publisher
-        uses: PlasmoHQ/bpp@v3.5.0
-        with:
-          keys: ${{ secrets.SUBMIT_KEYS }}
-          verbose: true
+      #- name: Browser Platform Publisher
+      #  uses: PlasmoHQ/bpp@v3.5.0
+      #  with:
+      #    keys: ${{ secrets.SUBMIT_KEYS }}
+      #    verbose: true
       - name: Generate release
         uses: ncipollo/release-action@v1.13.0
         id: release-action
