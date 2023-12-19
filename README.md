@@ -19,6 +19,8 @@ Bonus on Firefox: it cleans the tab's navigation history to prevent the back but
 
 # Context
 
+## What is the problem?
+
 > To help address content and perspective gaps when a user searches in their local language, sometimes Google may translate the title link and snippet of a search result for results that aren't in the language of the search query, when available.
 > https://developers.google.com/search/docs/appearance/translated-results
 
@@ -26,11 +28,22 @@ This feature seems to be more globaly deployed since december 2023 (at least for
 
 There is no easy way to just disable this feature, so this extension is here to help until Google provide a way to disable it.
 
-## Why does it not work?
+## Security concerns
 
-I don't know! This fix is hacky, the extension is heavily relying on the structure of the Google Search page. If Google change it, the extension will not work anymore. If you find a bug, please open an issue. Or even a pull request! Then hope for a quick new release.
+- [Google Translate XSS](https://www.youtube.com/watch?v=Nk9jehNhqVc) proof of concept (2012);
+- [ Google Translate Tricks Spam Filters ](https://www.bitdefender.com/blog/hotforsecurity/google-translate-tricks-spam-filters/) - Bitdefender (2013);
+- [Hacker group uses Google Translate to hide phishing sites](https://www.zdnet.com/article/hacker-group-uses-google-translate-to-hide-phishing-sites/) - ZDNET (2019)
+- [Google Translate is being hijacked by phishers to steal your data](https://www.techradar.com/news/google-translate-is-being-hijacked-by-phishers-to-steal-your-data) - Techradar (2022);
+- [Threat actors using images, Google translate links, and special characters to launch phishing attacks](https://blog.osarmor.com/333/google-translate-used-in-phishing-attack/) - OSArmor (2023);
+- [Google Translate Used in Phishing Attack to Bypass Antispam Filters](https://www.vadesecure.com/en/blog/new-phishing-attack-leverages-google-translate-and-ipfs-decentralized-network) with IPFS Decentralized Network - Vade Secure (2023).
 
-It might also be linked to cross-extensions incompatibilities, please report any.
+# Why the extension isn't working?
+
+I don't know! This fix is hacky, the extension is heavily relying on the structure of the Google Search page. If Google change it, the extension will not work anymore. You might even be just unlucky and the chosen one for a Google Live Experiments. Or maybe just some cross-extensions incompatibilities.
+
+If you find a bug or want to share some feedback, please open an issue. Or even a pull request!
+
+Discussions tab is also open if you want to share your thoughts for more complex topics. For something that can't be resolved in a quick *one-shot*.
 
 # Development
 
@@ -38,13 +51,23 @@ First, you need to install [pnpm](https://pnpm.io/) (or npm *ewh!*) and run `pnp
 
 ## Commands
 
-| Command                                                       | Action                                                                                                            |
-| :------------------------------------------------------------ | :---------------------------------------------------------------------------------------------------------------- |
-| `pnpm dev:[firefox,chrome]` or `npm run dev:[firefox,chrome]` | Run the development server for live testing by targeting either Firefox or Chrome.                                                    |
-| `pnpm build` or `npm run build`                               | Build all extensions packages with manifests (Firefox, Chrome, Edge, Vivaldi, Brave, Opera)                       |
-| `pnpm build:browser` or `npm run build:browser`               | Build the extension package with manifest for the targeted browser (Firefox, Chrome, Edge, Vivaldi, Brave, Opera) |
+| Command                                                                   | Action                                                                               |
+| :------------------------------------------------------------------------ | :----------------------------------------------------------------------------------- |
+| `pnpm dev:[firefox,chrome]` or `npm run dev:[browser]`                    | Run the development server for hot reload testing targeting either Firefox or Chrome |
+| `pnpm build` or `npm run build`                                           | Build Firefox and Chrome(-ium) production extensions with manifests v3               |
+| `pnpm build:zip` or `npm run build:zip`                                   | Build Firefox and Chrome(-ium) extensions packages and zip                           |
+| `pnpm build:[firefox,chrome,edge,opera]` <br>or `npm run build:[browser]` | Build the extension package with manifest for the targeted browser                   |
+| `pnpm plasmo help` or `npm run plasmo help`                               | Show CLI Plasmo help                                                                 |
 
 Currently, the extension is only tested on Firefox and Edge. It should work on every Chromium-browser. There is no extension for Safary because I can't test it. If you want to add support for it, feel free to open a pull request.
+
+## Project structure
+
+- `assets/` contains the extension icon and the screenshots for the README and addons stores content.
+- `background/messages/` contains the service worker handling the auto redirection;
+- `build/` contains the production build for each browser;
+- `contents/` contains the content scripts;
+- `popup.tsx` contains the React component for the extesnion popup.
 
 ## Testing with side-loading
 
