@@ -195,17 +195,16 @@ export const config: PlasmoCSConfig = {
 
 const cleanResult = (resultDiv: HTMLDivElement): Promise<void> => {
     return new Promise<void>((resolve) => {
-        // For .ub-button, see #1
+        // For .ub-button, see #1.
         const seeOriginalButton: HTMLSpanElement = resultDiv.querySelector<HTMLSpanElement>('span[role=button][tabindex="0"]:not([aria-label="Fermer"]):not(.ub-button)');
 
         /* A div added between "normal" results lines. If there is no button, nothing to do. 
         But if there is one, it will always be a result line. 
-        There is a span before with a text like "Translated by Google". Good indice to find the right element. */
-        if (seeOriginalButton === null || !seeOriginalButton.previousElementSibling.textContent.includes("Google")) {
+        There is a span before with a text like "Translated by Google". */
+        if (seeOriginalButton === null || !seeOriginalButton.previousElementSibling?.textContent.includes("Google"))
             return;
-        }
 
-        // Again, the translation is opt-out, so we need to click on the span[role=button] to see the original result.
+        // Fire click event to see the original result.
         seeOriginalButton.click();
 
         // Chasing the parent div four levels up. Beautiful, isn't it?
@@ -215,12 +214,11 @@ const cleanResult = (resultDiv: HTMLDivElement): Promise<void> => {
         // Google rewrite the URL to use their Google Translate proxy (AMP little brother).
         const link: HTMLAnchorElement = resultDiv.querySelector<HTMLAnchorElement>('a[href^="https://translate.google.com/translate?"]');
 
-        if (link !== null) { // Not good if we are here without a found link.
-            /* There is a span before with a text like "Translated by Google". */
+        // Not good if we are here without a found link. There is a span before with a text like "Translated by Google".
+        if (link !== null)
             link.href = link.href.replace("https://translate.google.com/translate?u=", "");
-        } else {
+        else
             console.log(`%cNo Google Search Translation Extension: tried to clean a non-valid case. Please copy this message if you don't mind to share the website you just visited and open an issue on https://github.com/lnoss/no-google-search-translation/issues \n\n${window.location.href}\n\n${resultDiv}`, 'background: #222; color: #ff7f00');
-        }
 
         resolve();
     });
@@ -235,23 +233,20 @@ const observer: MutationObserver = new MutationObserver((mutations: MutationReco
 
         // If no new nodes were added, WE DON'T CARE.
         for (const addedNode of mutation.addedNodes) {
-            // You are not a div ? We still don't care about you.
+            // You are not a div? We still don't care about you.
             if (!(addedNode instanceof HTMLDivElement)) {
                 continue;
             }
 
             // You are the chosen one.
             if (addedNode.id.startsWith("arc-srp_")) {
-
                 // The div is lazy loading, we have to clean it later.
                 if (addedNode.innerHTML === "") {
 
                     // It starts to be ugly. An observer to apply a new observer.
                     let specializedObserver: MutationObserver = new MutationObserver((mutations: MutationRecord[], observer: MutationObserver) => {
                         addedNode.querySelectorAll<HTMLDivElement>(`.${idOfResults}`)
-                            .forEach(async (resultDiv) => {
-                                cleanResult(addedNode);
-                            });
+                            .forEach(async (resultDiv) => cleanResult(resultDiv));
 
                         observer.disconnect();
                     });
@@ -260,9 +255,7 @@ const observer: MutationObserver = new MutationObserver((mutations: MutationReco
                 }
 
                 addedNode.querySelectorAll<HTMLDivElement>(`.${idOfResults}`)
-                    .forEach((resultDiv) => {
-                        cleanResult(resultDiv);
-                    });
+                    .forEach((resultDiv) => cleanResult(resultDiv));
             };
         }
     }
@@ -274,11 +267,6 @@ but the fetched results themselves are added with some pagination system:
 - the new 10 first fetched results are added in a #arc-srp_110 div;
 - then the next 10 in a #arc-srp_120 div;
 - etc.
- 
-It could totally break easily if Google decides to change the way they display the results. I am sure they 
-are already not renaming the CSS class to reduce the payload size. It is just for being annoying to scrapers.
-I don't want to play with closets elements, because it would be too much of a hassle to keep track of the indirections.
-It could be a solution if the current one breaks.
 */
 
 /* We might need to select `div#botstuff div[id^="arc-srp_"] > div > div[class]:not([id]):not(.arc-npt)` too.
@@ -287,10 +275,7 @@ const idOfResults: string = document.querySelector<HTMLDivElement>('div#rso > di
 const elements = document.getElementsByClassName(`${idOfResults}`);
 const typedElements: HTMLDivElement[] = Array.from(elements) as HTMLDivElement[];
 
-typedElements.forEach(async (resultDiv) => {
-    await cleanResult(resultDiv);
-});
+typedElements.forEach(async (resultDiv) => await cleanResult(resultDiv));
 
-/* We made one iteration to clean the server-side renderer results (and a bit more if the user scroll down too quickly). 
-Now, we need to observe the DOM to clean the results as soon as they are added. */
+// We made one iteration to clean the server-side renderer results (and a bit more if the user scroll down too quickly). 
 observer.observe(document.querySelector('#botstuff'), { childList: true, subtree: true });

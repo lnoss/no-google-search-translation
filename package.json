@@ -4,16 +4,14 @@
   "version": "0.0.3",
   "description": "Disable Google Search results auto translation feature. Auto redirect away from Google Translate proxy to the original URL page.",
   "scripts": {
-    "dev:chrome": "plasmo dev --target=chrome-mv3",
     "dev:firefox": "plasmo dev --target=firefox-mv3",
-    "build": "pnpm run build:firefox && pnpm run build:chrome",
+    "dev:chromium": "plasmo dev --target=chrome-mv3",
+    "build": "pnpm run build:firefox && pnpm run build:chromium",
     "build:firefox": "plasmo build --target=firefox-mv3",
-    "build:chrome": "plasmo build --target=chrome-mv3",
+    "build:chromium": "plasmo build --target=chrome-mv3",
     "build:opera": "plasmo build --target=opera-mv3",
-    "build:brave": "plasmo build --target=brave-mv3",
-    "build:vivaldi": "plasmo build --target=vivaldi-mv3",
     "build:edge": "plasmo build --target=edge-mv3",
-    "test": "plasmo test"
+    "build:zip": "pnpm run build:firefox --zip && pnpm run build:chromium --zip"
   },
   "dependencies": {
     "@plasmohq/messaging": "^0.6.1",

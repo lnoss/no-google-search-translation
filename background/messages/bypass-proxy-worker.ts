@@ -1,8 +1,8 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
-    var browser = browser || chrome;
-    const url = req.body.baseURI;
+    var browser: any = browser || chrome;
+    const url: string = req.body.baseURI;
 
     // I don't know exactly JavaScript's truthy and falsy values, so be explicit is the way.
     if (url === undefined || url === null || url === "") {
