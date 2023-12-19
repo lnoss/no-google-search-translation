@@ -1,13 +1,14 @@
 [![Badge Firefox]][Firefox] [![Badge Chrome]][Chrome]
 
-![Extension logo](assets/icon.png "Nice logo.")
+<p><img src="/assets/icon.png" height="64" alt="No Google Search Auto Translation Logo." title="Logo" /></p>
+
 **No Google Search Auto Translation** is a browser extension that remove the auto translation feature of Google Search. It also detect the Google Translate proxy and redirect you to the original page.
 
 Pending validation for Edge and Opera extensions stores. Using Edge, Bravo, Vivaldi or Opera, you should be able to install it from the Chrome Webstore.
 
 [Chrome]: https://chromewebstore.google.com/detail/no-google-search-translat/kdibhchppeokcmdamhekocbnkjkodoii
 [Badge Chrome]: https://img.shields.io/chrome-web-store/rating/kdibhchppeokcmdamhekocbnkjkodoii?label=Chrome%20(and%20co.)&style=for-the-badge&logo=google-chrome&logoColor=white
-[Firefox]: https://addons.mozilla.org/fr/firefox/addon/no-google-search-translation/
+[Firefox]: https://addons.mozilla.org/firefox/addon/no-google-search-translation/
 [Badge Firefox]: https://img.shields.io/amo/rating/no-google-search-translation?label=Firefox&style=for-the-badge&logo=firefoxbrowser&logoColor=white
 
 # Showcase

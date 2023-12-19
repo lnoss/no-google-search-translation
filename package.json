@@ -1,13 +1,13 @@
 {
   "name": "no-google-search-translation",
   "displayName": "No Google Search Translation",
-  "version": "0.0.1",
-  "description": "Remove Google Search results translation feature. Auto redirect away from Google Translate proxy to the original URL page.",
+  "version": "0.0.2",
+  "description": "Disable Google Search results auto translation feature. Auto redirect away from Google Translate proxy to the original URL page.",
   "scripts": {
-    "dev:edge": "plasmo dev --target=edge-mv3",
-    "dev:firefox": "plasmo dev --target=firefox-mv2",
-    "build": "pnpm run build:firefox && pnpm run build:chrome && pnpm run build:opera && pnpm run build:brave && pnpm run build:vivaldi && pnpm run build:edge",
-    "build:firefox": "plasmo build --target=firefox-mv2",
+    "dev:chrome": "plasmo dev --target=chrome-mv3",
+    "dev:firefox": "plasmo dev --target=firefox-mv3",
+    "build": "pnpm run build:firefox && pnpm run build:chrome",
+    "build:firefox": "plasmo build --target=firefox-mv3",
     "build:chrome": "plasmo build --target=chrome-mv3",
     "build:opera": "plasmo build --target=opera-mv3",
     "build:brave": "plasmo build --target=brave-mv3",
@@ -29,6 +29,21 @@
     "@types/react-dom": "18.2.15",
     "prettier": "3.0.3",
     "typescript": "5.2.2"
+  },
+  "license": "GPL-3.0-only",
+  "engines": {
+    "node": "^20"
+  },
+  "targets": {
+    "default": {
+      "engines": {
+        "browsers": "Firefox >= 109, Chrome >= 88, last 3 major versions, not dead"
+      }
+    }
+  },
+  "homepage": "https://github.com/lnoss/no-google-search-translation",
+  "bugs": {
+    "url": "https://github.com/lnoss/no-google-search-translation/issues"
   },
   "manifest": {
     "host_permissions": [
