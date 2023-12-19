@@ -235,7 +235,6 @@ const observer: MutationObserver = new MutationObserver((mutations: MutationReco
 
         // If no new nodes were added, WE DON'T CARE.
         for (const addedNode of mutation.addedNodes) {
-
             // You are not a div ? We still don't care about you.
             if (!(addedNode instanceof HTMLDivElement)) {
                 continue;
@@ -243,9 +242,27 @@ const observer: MutationObserver = new MutationObserver((mutations: MutationReco
 
             // You are the chosen one.
             if (addedNode.id.startsWith("arc-srp_")) {
-                addedNode.querySelectorAll<HTMLDivElement>('div > div[class]:not([id]):not(.arc-npt)')
-                    .forEach(async (resultDiv) =>
-                        await cleanResult(resultDiv));
+
+                // The div is lazy loading, we have to clean it later.
+                if (addedNode.innerHTML === "") {
+
+                    // It starts to be ugly. An observer to apply a new observer.
+                    let specializedObserver: MutationObserver = new MutationObserver((mutations: MutationRecord[], observer: MutationObserver) => {
+                        addedNode.querySelectorAll<HTMLDivElement>(`.${idOfResults}`)
+                            .forEach(async (resultDiv) => {
+                                cleanResult(addedNode);
+                            });
+
+                        observer.disconnect();
+                    });
+
+                    specializedObserver.observe(addedNode, { childList: true });
+                }
+
+                addedNode.querySelectorAll<HTMLDivElement>(`.${idOfResults}`)
+                    .forEach((resultDiv) => {
+                        cleanResult(resultDiv);
+                    });
             };
         }
     }
@@ -266,11 +283,14 @@ It could be a solution if the current one breaks.
 
 /* We might need to select `div#botstuff div[id^="arc-srp_"] > div > div[class]:not([id]):not(.arc-npt)` too.
 I am not sure if the observer will always catch in time the new results if scrolling down too quickly. */
-const resultsDivs: HTMLDivElement[] = [...document.querySelectorAll<HTMLDivElement>('div#rso > div')];
-resultsDivs.forEach(async (resultDiv) => {
+const idOfResults: string = document.querySelector<HTMLDivElement>('div#rso > div > div').classList[0];
+const elements = document.getElementsByClassName(`${idOfResults}`);
+const typedElements: HTMLDivElement[] = Array.from(elements) as HTMLDivElement[];
+
+typedElements.forEach(async (resultDiv) => {
     await cleanResult(resultDiv);
 });
 
 /* We made one iteration to clean the server-side renderer results (and a bit more if the user scroll down too quickly). 
 Now, we need to observe the DOM to clean the results as soon as they are added. */
-observer.observe(document.querySelector('#rcnt'), { childList: true, subtree: true });
+observer.observe(document.querySelector('#botstuff'), { childList: true, subtree: true });
