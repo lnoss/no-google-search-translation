@@ -34,3 +34,5 @@ dist/
 
 # editors
 .vscode/
+
+stores.keys.json
