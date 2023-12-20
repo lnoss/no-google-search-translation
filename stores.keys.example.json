@@ -1,0 +1,16 @@
+{
+    "$schema": "https://raw.githubusercontent.com/plasmo-corp/bpp/v3/keys.schema.json",
+    "chrome": {
+      "zip": "chromium-addon-{version}.zip",
+      "clientId": "aaa-bbb-cccc.apps.googleusercontent.com",
+      "clientSecret": "abcD1abcD2abcD3abcD4",
+      "refreshToken": "dcbA1dcbA2dcbA3dcbA4",
+      "extId": "kdibhchppeokcmdamhekocbnkjkodoii"
+    },
+    "firefox": {
+      "file": "firefox-addon-{version}.zip",
+      "extId": "6def1df3-6313-4648-a6ca-945b92aba510",
+      "apiKey": "user:111111111",
+      "apiSecret": "abcD1abcD2abcD3abcD4dcbA1dcbA2dcbA3dcbA4"
+    }
+  }
