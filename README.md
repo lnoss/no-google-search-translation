@@ -39,7 +39,11 @@ There is no easy way to just disable this feature, so this extension is here to 
 
 # Why the extension isn't working?
 
-I don't know! This fix is hacky, the extension is heavily relying on the structure of the Google Search page. If Google change it, the extension will not work anymore. You might even be just unlucky and the chosen one for a Google Live Experiments. Or maybe just some cross-extensions incompatibilities.
+I don't know! 
+
+If not working, please check first that you approved the websites access permissions in the extension settings. Check help pages for [Firefox](https://support.mozilla.org/en-US/kb/manage-optional-permissions-extensions) and [Chrome](https://support.google.com/chrome_webstore/answer/2664769). If you are using a Chromium browser, you should be able to follow the Chrome help page.
+
+This fix is hacky, the extension is heavily relying on the structure of the Google Search page. If Google change it, the extension will not work anymore. You might even be just unlucky and the chosen one for a Google Live Experiments. Or maybe just some cross-extensions incompatibilities.
 
 If you find a bug or want to share some feedback, please open an issue. Or even a pull request!
 

@@ -31,7 +31,7 @@ jobs:
         uses: martinbeentjes/npm-get-version-action@v1.3.1
       - name: Build Firefox extension
         run: | 
-          pnpm plasmo build --target=firefox-mv3 --zip
+          pnpm plasmo build --target=firefox-mv2 --zip
           mv build/firefox-mv3-prod.zip firefox-addon-${{ steps.package-version.outputs.current-version }}.zip
       - name: Build Chrome(-ium) extension
         run: | 
