@@ -52,10 +52,11 @@ jobs:
           draft: true
           generateReleaseNotes: true
           makeLatest: true
+          token: ${{ secrets.PERSO_TOKEN }}
       - name: Upload release assets
         uses: AButler/upload-release-assets@v3.0 
         with:
           files: "firefox-addon-${{ steps.package-version.outputs.current-version }}.zip;chromium-addon-${{ steps.package-version.outputs.current-version }}.zip"
-          repo-token: ${{ secrets.PERSO_TOKEN }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
           release-id: ${{ steps.release-action.outputs.id }}
 
