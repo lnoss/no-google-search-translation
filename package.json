@@ -44,6 +44,11 @@
     "url": "https://github.com/lnoss/no-google-search-translation/issues"
   },
   "manifest": {
+    "browser_specific_settings": {
+      "gecko": {
+        "id": "{6def1df3-6313-4648-a6ca-945b92aba510}"
+      }
+    },
     "host_permissions": [
       "*://*.translate.goog/*",
       "*://*.google.com/search*",
