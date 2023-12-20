@@ -1,4 +1,4 @@
-[![Badge Firefox]][Firefox] [![Badge Chrome]][Chrome]
+[![Badge Firefox]][Firefox] [![Badge Chrome]][Chrome] ![GitHub commits since latest release (by SemVer including pre-releases)](https://img.shields.io/github/commits-since/lnoss/no-google-search-translation/latest/master?style=for-the-badge)
 
 <p><img src="/assets/icon.png" height="64" alt="No Google Search Auto Translation Logo." title="Logo" /></p>
 
@@ -7,9 +7,9 @@
 Pending validation for Edge and Opera extensions stores. Using Edge, Bravo, Vivaldi or Opera, you should be able to install it from the Chrome Webstore.
 
 [Chrome]: https://chromewebstore.google.com/detail/no-google-search-translat/kdibhchppeokcmdamhekocbnkjkodoii
-[Badge Chrome]: https://img.shields.io/chrome-web-store/rating/kdibhchppeokcmdamhekocbnkjkodoii?label=Chrome%20(and%20co.)&style=for-the-badge&logo=google-chrome&logoColor=white
+[Badge Chrome]: https://img.shields.io/chrome-web-store/rating/kdibhchppeokcmdamhekocbnkjkodoii?label=Get%20on%20Chrome%20(and%20co.)&style=for-the-badge&logo=google-chrome&logoColor=white
 [Firefox]: https://addons.mozilla.org/firefox/addon/no-google-search-translation/
-[Badge Firefox]: https://img.shields.io/amo/rating/no-google-search-translation?label=Firefox&style=for-the-badge&logo=firefoxbrowser&logoColor=white
+[Badge Firefox]: https://img.shields.io/amo/rating/no-google-search-translation?label=Get%20on%20Firefox&style=for-the-badge&logo=firefoxbrowser&logoColor=white
 
 # Showcase
 
