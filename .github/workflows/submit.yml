@@ -32,7 +32,7 @@ jobs:
       - name: Build Firefox extension
         run: | 
           pnpm plasmo build --target=firefox-mv2 --zip
-          mv build/firefox-mv3-prod.zip firefox-addon-${{ steps.package-version.outputs.current-version }}.zip
+          mv build/firefox-mv2-prod.zip firefox-addon-${{ steps.package-version.outputs.current-version }}.zip
       - name: Build Chrome(-ium) extension
         run: | 
           pnpm plasmo build --target=chrome-mv3 --zip
