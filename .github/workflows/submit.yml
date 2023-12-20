@@ -47,7 +47,7 @@ jobs:
         id: release-action
         with:
           bodyFile: "CHANGELOG.md"
-          commit: "main"
+          commit: "master"
           tag: ${{ steps.package-version.outputs.current-version }}
           draft: true
           generateReleaseNotes: true
