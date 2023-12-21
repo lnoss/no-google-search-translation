@@ -1,3 +1,9 @@
+It seems that the wider roll-out of the feature has been cancelled by Google. At least on my side, the feature is no longer offered. I'm seeing similar comments on social networks.
+
+**You should be able to uninstall the extension**, and maybe come back in a few months when the revert will be reverted! Who knows. It was a short adventure, but it was fun. 🫡
+
+<hr>
+
 [![Badge Firefox]][Firefox] [![Badge Chrome]][Chrome] ![GitHub commits since latest release (by SemVer including pre-releases)](https://img.shields.io/github/commits-since/lnoss/no-google-search-translation/latest/master?style=for-the-badge)
 
 <p><img src="/assets/icon.png" height="64" alt="No Google Search Auto Translation Logo." title="Logo" /></p>
