@@ -2,9 +2,9 @@
 
 <p><img src="/assets/icon.png" height="64" alt="No Google Search Auto Translation Logo." title="Logo" /></p>
 
-**No Google Search Auto Translation** is a browser extension that remove the auto translation feature of Google Search. It also detect the Google Translate proxy and redirect you to the original page.
+**No Google Search Auto Translation** is a browser extension that remove the auto translation feature of Google Search. It also detect the Google Translate proxy and redirect you to the original page. The extension is powered by the [Plasmo](https://docs.plasmo.com/) framework.
 
-Pending validation for Edge and Opera extensions stores. Using Edge, Bravo, Vivaldi or Opera, you should be able to install it from the Chrome Webstore.
+Pending validation for Edge and Opera extensions stores. Using Edge, Brave, Vivaldi or Opera, you should be able to install it from the Chrome Webstore.
 
 [Chrome]: https://chromewebstore.google.com/detail/no-google-search-translat/kdibhchppeokcmdamhekocbnkjkodoii
 [Badge Chrome]: https://img.shields.io/chrome-web-store/rating/kdibhchppeokcmdamhekocbnkjkodoii?label=Get%20on%20Chrome%20(and%20co.)&style=for-the-badge&logo=google-chrome&logoColor=white
@@ -57,13 +57,13 @@ First, you need to install [pnpm](https://pnpm.io/) (or npm *ewh!*) and run `pnp
 
 | Command                                                                   | Action                                                                               |
 | :------------------------------------------------------------------------ | :----------------------------------------------------------------------------------- |
-| `pnpm dev:[firefox,chrome]` or `npm run dev:[browser]`                    | Run the development server for hot reload testing targeting either Firefox or Chrome |
+| `pnpm dev:[firefox,chromium]` or `npm run dev:[browser]`                    | Run the development server for hot reload testing targeting either Firefox or Chrome(-ium) |
 | `pnpm build` or `npm run build`                                           | Build Firefox and Chrome(-ium) production extensions with manifests v3               |
 | `pnpm build:zip` or `npm run build:zip`                                   | Build Firefox and Chrome(-ium) extensions packages and zip                           |
-| `pnpm build:[firefox,chrome,edge,opera]` <br>or `npm run build:[browser]` | Build the extension package with manifest for the targeted browser                   |
+| `pnpm build:[firefox,chromium,edge,opera]` <br>or `npm run build:[browser]` | Build the extension package with manifest for the targeted browser                   |
 | `pnpm plasmo help` or `npm run plasmo help`                               | Show CLI Plasmo help                                                                 |
 
-Currently, the extension is only tested on Firefox and Edge. It should work on every Chromium-browser. There is no extension for Safary because I can't test it. If you want to add support for it, feel free to open a pull request.
+Currently, the extension is only tested on Firefox and Edge. It should work on every Chromium-browser. There is no extension for Safari because I can't test it. If you want to add support for it, feel free to open a pull request.
 
 ## Project structure
 
@@ -75,7 +75,7 @@ Currently, the extension is only tested on Firefox and Edge. It should work on e
 
 ## Testing with side-loading
 
-To live test the code, open your browser and load the appropriate development build. For example, if you are developing for Edge, using manifest v3, use: `build/edge-mv3-dev`. For Firefox, use `build/firefox-mv2-dev`.
+To live test the code, open your browser and load the appropriate development build. For example, if you are developing for Edge, using manifest v3, use: `build/chrome-mv3-dev`. For Firefox, use `build/firefox-mv2-dev`.
 
 Here the official documentation pages for the steps to follow:
 * Firefox: https://firefox-source-docs.mozilla.org/devtools-user/about_colon_debugging/index.html#extensions
@@ -102,4 +102,4 @@ Some are using Google Search results (like Startpage), others build their own in
 
 If fore some reasons, you don't like browsers extensions (or just mine!), you can use [this user script](https://support.google.com/websearch/thread/248354054?hl=en&msgid=248372536) made by David Trapp.
 
-Note that the text `Original ansehen` needs to be changed based on what language the results are translated to as stated by the user script author. Also, you might want to change the `@match` value to `https://www.google.*/*` to make it work on all Google Search domains. The script is not bypassing the Google Translate proxy, so you will still be redirected to the Goole translated page.
+Note that the text `Original ansehen` needs to be changed based on what language the results are translated to as stated by the user script author. Also, you might want to change the `@match` value to make it work on the Google Search domain name you use. The script is not bypassing the Google Translate proxy, so you will still be redirected to the Google Translate proxy page traducting the original page.
