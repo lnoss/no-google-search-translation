@@ -2,6 +2,8 @@ It seems that the wider roll-out of the feature has been cancelled by Google. At
 
 **You should be able to uninstall the extension**, and maybe come back in a few months when the revert will be reverted! Who knows. It was a short adventure, but it was fun. 🫡
 
+Funny story: Google deleted the topics complaining about this feature, [see](https://support.google.com/websearch/thread/248354054).
+
 <hr>
 
 [![Badge Firefox]][Firefox] [![Badge Chrome]][Chrome] ![GitHub commits since latest release (by SemVer including pre-releases)](https://img.shields.io/github/commits-since/lnoss/no-google-search-translation/latest/master?style=for-the-badge)
