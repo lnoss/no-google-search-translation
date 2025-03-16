@@ -1,16 +1,8 @@
-It seems that the wider roll-out of the feature has been cancelled by Google. At least on my side, the feature is no longer offered. I'm seeing similar comments on social networks.
-
-**You should be able to uninstall the extension**, and maybe come back in a few months when the revert will be reverted! Who knows. It was a short adventure, but it was fun. 🫡
-
-Funny story: Google deleted the topics complaining about this feature, [see](https://support.google.com/websearch/thread/248354054).
-
-<hr>
-
 [![Badge Firefox]][Firefox] [![Badge Chrome]][Chrome] ![GitHub commits since latest release (by SemVer including pre-releases)](https://img.shields.io/github/commits-since/lnoss/no-google-search-translation/latest/master?style=for-the-badge)
 
 <p><img src="/assets/icon.png" height="64" alt="No Google Search Auto Translation Logo." title="Logo" /></p>
 
-**No Google Search Auto Translation** is a browser extension that remove the auto translation feature of Google Search. It also detect the Google Translate proxy and redirect you to the original page. The extension is powered by the [Plasmo](https://docs.plasmo.com/) framework.
+**No Google Search Auto Translation** is a browser extension to untranslate Google Search results. It also detects and redirects away from Google Translate proxy pages, taking you directly to the original URLs.
 
 Pending validation for Edge and Opera extensions stores. Using Edge, Brave, Vivaldi or Opera, you should be able to install it from the Chrome Webstore.
 
@@ -47,8 +39,6 @@ There is no easy way to just disable this feature, so this extension is here to 
 
 # Why the extension isn't working?
 
-I don't know! 
-
 If not working, please check first that you approved the websites access permissions in the extension settings. Check help pages for [Firefox](https://support.mozilla.org/en-US/kb/manage-optional-permissions-extensions) and [Chrome](https://support.google.com/chrome_webstore/answer/2664769). If you are using a Chromium browser, you should be able to follow the Chrome help page.
 
 This fix is hacky, the extension is heavily relying on the structure of the Google Search page. If Google change it, the extension will not work anymore. You might even be just unlucky and the chosen one for a Google Live Experiments. Or maybe just some cross-extensions incompatibilities.
@@ -59,7 +49,7 @@ Discussions tab is also open if you want to share your thoughts for more complex
 
 # Development
 
-First, you need to install [pnpm](https://pnpm.io/) (or npm *ewh!*) and run `pnpm install` (or `npm install`) to install all dependencies.
+The extension is powered by the [Plasmo](https://docs.plasmo.com/) framework. First, you need to install [pnpm](https://pnpm.io/) (or npm *ewh!*) and run `pnpm install` (or `npm install`) to install all dependencies.
 
 ## Commands
 
@@ -108,6 +98,6 @@ Some are using Google Search results (like Startpage), others build their own in
 
 ## User script
 
-If fore some reasons, you don't like browsers extensions (or just mine!), you can use [this user script](https://support.google.com/websearch/thread/248354054?hl=en&msgid=248372536) made by David Trapp.
+You can also use [this user script](https://webapps.stackexchange.com/a/173236) made by David Trapp.
 
 Note that the text `Original ansehen` needs to be changed based on what language the results are translated to as stated by the user script author. Also, you might want to change the `@match` value to make it work on the Google Search domain name you use. The script is not bypassing the Google Translate proxy, so you will still be redirected to the Google Translate proxy page traducting the original page.
