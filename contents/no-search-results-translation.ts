@@ -226,27 +226,25 @@ const cleanResult = (resultDiv: HTMLDivElement): Promise<void> => {
 
 const observer: MutationObserver = new MutationObserver((mutations: MutationRecord[]) => {
     for (const mutation of mutations) {
-        // https://developer.mozilla.org/en-US/docs/Web/API/MutationRecord/type
+         // https://developer.mozilla.org/en-US/docs/Web/API/MutationRecord/type
         if (mutation.type !== 'childList') {
             continue;
         }
 
-        // If no new nodes were added, WE DON'T CARE.
         for (const addedNode of mutation.addedNodes) {
-            // You are not a div? We still don't care about you.
             if (!(addedNode instanceof HTMLDivElement)) {
                 continue;
             }
 
-            // You are the chosen one.
             if (addedNode.id.startsWith("arc-srp_")) {
                 // The div is lazy loading, we have to clean it later.
                 if (addedNode.innerHTML === "") {
-
-                    // It starts to be ugly. An observer to apply a new observer.
                     let specializedObserver: MutationObserver = new MutationObserver((mutations: MutationRecord[], observer: MutationObserver) => {
-                        addedNode.querySelectorAll<HTMLDivElement>(`.${originalClassesFinding}`)
-                            .forEach(async (resultDiv) => cleanResult(resultDiv));
+                        // Check both class sets using getElementsByClassName
+                        Array.from(addedNode.getElementsByClassName(originalClassesFinding))
+                            .forEach(async (resultDiv) => cleanResult(resultDiv as HTMLDivElement));
+                        Array.from(addedNode.getElementsByClassName(newClassesFinding))
+                            .forEach(async (resultDiv) => cleanResult(resultDiv as HTMLDivElement));
 
                         observer.disconnect();
                     });
@@ -254,9 +252,12 @@ const observer: MutationObserver = new MutationObserver((mutations: MutationReco
                     specializedObserver.observe(addedNode, { childList: true });
                 }
 
-                addedNode.querySelectorAll<HTMLDivElement>(`.${originalClassesFinding}`)
-                    .forEach((resultDiv) => cleanResult(resultDiv));
-            };
+                // Check both class sets for immediate results using getElementsByClassName
+                Array.from(addedNode.getElementsByClassName(originalClassesFinding))
+                    .forEach((resultDiv) => cleanResult(resultDiv as HTMLDivElement));
+                Array.from(addedNode.getElementsByClassName(newClassesFinding))
+                    .forEach((resultDiv) => cleanResult(resultDiv as HTMLDivElement));
+            }
         }
     }
 });
