@@ -1,7 +1,7 @@
 {
   "name": "no-google-search-translation",
   "displayName": "No Google Search Translation",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Disable Google Search results auto translation feature. Auto redirect away from Google Translate proxy to the original URL page.",
   "scripts": {
     "dev:firefox": "plasmo dev --target=firefox-mv2",
@@ -14,19 +14,19 @@
     "build:zip": "pnpm run build:firefox --zip && pnpm run build:chromium --zip"
   },
   "dependencies": {
-    "@plasmohq/messaging": "^0.6.1",
-    "plasmo": "0.84.0",
+    "@plasmohq/messaging": "^0.7.1",
+    "plasmo": "0.90.3",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
   "devDependencies": {
-    "@ianvs/prettier-plugin-sort-imports": "4.1.1",
-    "@types/chrome": "0.0.251",
-    "@types/node": "20.9.0",
-    "@types/react": "18.2.37",
-    "@types/react-dom": "18.2.15",
-    "prettier": "3.0.3",
-    "typescript": "5.2.2"
+    "@ianvs/prettier-plugin-sort-imports": "4.4.1",
+    "@types/chrome": "0.0.315",
+    "@types/node": "22.14.1",
+    "@types/react": "19.1.2",
+    "@types/react-dom": "19.1.2",
+    "prettier": "3.5.3",
+    "typescript": "5.8.3"
   },
   "license": "GPL-3.0-only",
   "engines": {
@@ -239,5 +239,6 @@
       "*://www.google.co.zw/search*",
       "*://www.google.cat/search*"
     ]
-  }
+  },
+  "packageManager": "pnpm@10.8.1+sha512.c50088ba998c67b8ca8c99df8a5e02fd2ae2e2b29aaf238feaa9e124248d3f48f9fb6db2424949ff901cffbb5e0f0cc1ad6aedb602cd29450751d11c35023677"
 }

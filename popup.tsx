@@ -6,12 +6,24 @@ function IndexPopup() {
         <title>No Google Search Auto Translation</title>
         <style>
           {`
+            :root {
+              --text-color: #333;
+              --bg-color: #fff;
+            }
+            @media (prefers-color-scheme: dark) {
+              :root {
+                --text-color: #e1e1e1;
+                --bg-color: #1a1a1a;
+              }
+            }
             body {
               font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-              font-size: 14px;
+              font-size: 13px;
               line-height: 1.5;
               margin: 6px;
               width: 340px;
+              color: var(--text-color);
+              background-color: var(--bg-color);
             }
             h1 {
               font-size: 20px;
@@ -20,6 +32,14 @@ function IndexPopup() {
             p {
               font-size: 16px;
               font-weight: 400;
+            }
+            a {
+              color: #0066cc;
+            }
+            @media (prefers-color-scheme: dark) {
+              a {
+                color: #4dabff;
+              }
             }
           `}
         </style>
