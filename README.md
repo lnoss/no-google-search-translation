@@ -1,15 +1,19 @@
-[![Badge Firefox]][Firefox] [![Badge Chrome]][Chrome] ![GitHub commits since latest release (by SemVer including pre-releases)](https://img.shields.io/github/commits-since/lnoss/no-google-search-translation/latest/master?style=for-the-badge)
+[![Badge Firefox]][Firefox] [![Badge Chrome]][Chrome] [![Badge Edge]][Edge] ![GitHub commits since latest release (by SemVer including pre-releases)](https://img.shields.io/github/commits-since/lnoss/no-google-search-translation/latest/master?style=for-the-badge)
 
 <p><img src="/assets/icon.png" height="64" alt="No Google Search Auto Translation Logo." title="Logo" /></p>
 
 **No Google Search Auto Translation** is a browser extension to untranslate Google Search results. It also detects and redirects away from Google Translate proxy pages, taking you directly to the original URLs.
 
-Pending validation for Edge and Opera extensions stores. Using Edge, Brave, Vivaldi or Opera, you should be able to install it from the Chrome Webstore.
+Pending validation for Opera. Using Edge, Brave, Vivaldi or Opera, you should be able to install it from the Chrome Webstore anyway.
 
 [Chrome]: https://chromewebstore.google.com/detail/no-google-search-translat/kdibhchppeokcmdamhekocbnkjkodoii
-[Badge Chrome]: https://img.shields.io/chrome-web-store/rating/kdibhchppeokcmdamhekocbnkjkodoii?label=Get%20on%20Chrome%20(and%20co.)&style=for-the-badge&logo=google-chrome&logoColor=white
+[Badge Chrome]: https://img.shields.io/chrome-web-store/rating/kdibhchppeokcmdamhekocbnkjkodoii?label=Get%20on%20Google%20Chrome%20(Chromium)&style=for-the-badge&logo=google-chrome
 [Firefox]: https://addons.mozilla.org/firefox/addon/no-google-search-translation/
-[Badge Firefox]: https://img.shields.io/amo/rating/no-google-search-translation?label=Get%20on%20Firefox&style=for-the-badge&logo=firefoxbrowser&logoColor=white
+[Badge Firefox]: https://img.shields.io/amo/rating/no-google-search-translation?label=Get%20on%20Firefox&style=for-the-badge&logo=firefoxbrowser
+[Edge]: https://microsoftedge.microsoft.com/addons/detail/no-google-search-translat/ldcpobigcccphnajlohdpgjadfpdmipi
+[Badge Edge]: https://img.shields.io/badge/Microsoft_Edge-Get_It-0?style=for-the-badge
+[Opera]: https://www.xxx.yz/
+[Badge Opera]: https://img.shields.io/badge/Opera-Get_It-0?style=for-the-badge&logo=safari
 
 # Showcase
 
