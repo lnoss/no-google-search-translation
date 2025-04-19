@@ -42,7 +42,7 @@ jobs:
       #    keys: ${{ secrets.SUBMIT_KEYS }}
       #    verbose: true
       - name: Generate release
-        uses: ncipollo/release-action@v1.13.0
+        uses: ncipollo/release-action@v1.16.0
         id: release-action
         with:
           bodyFile: "CHANGELOG.md"
