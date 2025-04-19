@@ -51,7 +51,6 @@ jobs:
           draft: true
           generateReleaseNotes: true
           makeLatest: true
-          token: ${{ secrets.PERSO_TOKEN }}
       - name: Upload release assets
         uses: AButler/upload-release-assets@v3.0 
         with:
