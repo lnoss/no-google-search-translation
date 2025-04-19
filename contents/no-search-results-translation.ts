@@ -226,27 +226,25 @@ const cleanResult = (resultDiv: HTMLDivElement): Promise<void> => {
 
 const observer: MutationObserver = new MutationObserver((mutations: MutationRecord[]) => {
     for (const mutation of mutations) {
-        // https://developer.mozilla.org/en-US/docs/Web/API/MutationRecord/type
+         // https://developer.mozilla.org/en-US/docs/Web/API/MutationRecord/type
         if (mutation.type !== 'childList') {
             continue;
         }
 
-        // If no new nodes were added, WE DON'T CARE.
         for (const addedNode of mutation.addedNodes) {
-            // You are not a div? We still don't care about you.
             if (!(addedNode instanceof HTMLDivElement)) {
                 continue;
             }
 
-            // You are the chosen one.
             if (addedNode.id.startsWith("arc-srp_")) {
                 // The div is lazy loading, we have to clean it later.
                 if (addedNode.innerHTML === "") {
-
-                    // It starts to be ugly. An observer to apply a new observer.
                     let specializedObserver: MutationObserver = new MutationObserver((mutations: MutationRecord[], observer: MutationObserver) => {
-                        addedNode.querySelectorAll<HTMLDivElement>(`.${idOfResults}`)
-                            .forEach(async (resultDiv) => cleanResult(resultDiv));
+                        // Check both class sets using getElementsByClassName
+                        Array.from(addedNode.getElementsByClassName(originalClassesFinding))
+                            .forEach(async (resultDiv) => cleanResult(resultDiv as HTMLDivElement));
+                        Array.from(addedNode.getElementsByClassName(newClassesFinding))
+                            .forEach(async (resultDiv) => cleanResult(resultDiv as HTMLDivElement));
 
                         observer.disconnect();
                     });
@@ -254,13 +252,17 @@ const observer: MutationObserver = new MutationObserver((mutations: MutationReco
                     specializedObserver.observe(addedNode, { childList: true });
                 }
 
-                addedNode.querySelectorAll<HTMLDivElement>(`.${idOfResults}`)
-                    .forEach((resultDiv) => cleanResult(resultDiv));
-            };
+                // Check both class sets for immediate results using getElementsByClassName
+                Array.from(addedNode.getElementsByClassName(originalClassesFinding))
+                    .forEach((resultDiv) => cleanResult(resultDiv as HTMLDivElement));
+                Array.from(addedNode.getElementsByClassName(newClassesFinding))
+                    .forEach((resultDiv) => cleanResult(resultDiv as HTMLDivElement));
+            }
         }
     }
 });
 
+// Original way to find the results CSS classes
 /* First selector is for the main search div results, aka. the only results servers-side rendered.
 The second selector is selecting dynamically fetched results. They are added in a parent #botstuff div,
 but the fetched results themselves are added with some pagination system:
@@ -271,11 +273,16 @@ but the fetched results themselves are added with some pagination system:
 
 /* We might need to select `div#botstuff div[id^="arc-srp_"] > div > div[class]:not([id]):not(.arc-npt)` too.
 I am not sure if the observer will always catch in time the new results if scrolling down too quickly. */
-const idOfResults: string = document.querySelector<HTMLDivElement>('div#rso > div > div').classList[0];
-const elements = document.getElementsByClassName(`${idOfResults}`);
-const typedElements: HTMLDivElement[] = Array.from(elements) as HTMLDivElement[];
+const originalClassesFinding: string = document.querySelector<HTMLDivElement>('div#rso > div > div').classList[0];
+const originalElements = document.getElementsByClassName(`${originalClassesFinding}`);
+const originalTypedElements: HTMLDivElement[] = Array.from(originalElements) as HTMLDivElement[];
+originalTypedElements.forEach(async (resultDiv) => await cleanResult(resultDiv));
 
-typedElements.forEach(async (resultDiv) => await cleanResult(resultDiv));
+// New way to find the results CSS classes since the original way is not working anymore for some (see #7)
+const newClassesFinding: string = document.querySelector<HTMLDivElement>('div#rso > div > div > div').classList.toString();
+const newElements = document.getElementsByClassName(`${newClassesFinding}`);
+const newTypedElements: HTMLDivElement[] = Array.from(newElements) as HTMLDivElement[];
+newTypedElements.forEach(async (resultDiv) => await cleanResult(resultDiv));
 
 // We made one iteration to clean the server-side renderer results (and a bit more if the user scroll down too quickly). 
 observer.observe(document.querySelector('#botstuff'), { childList: true, subtree: true });
