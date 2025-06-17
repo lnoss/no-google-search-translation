@@ -215,11 +215,26 @@ const cleanResult = (resultDiv: HTMLDivElement): Promise<void> => {
         const link: HTMLAnchorElement = resultDiv.querySelector<HTMLAnchorElement>('a[href^="https://translate.google.com/translate?"]');
 
         // Not good if we are here without a found link. There is a span before with a text like "Translated by Google".
-        if (link !== null)
-            link.href = link.href.replace("https://translate.google.com/translate?u=", "");
-        else
-            console.log(`%cNo Google Search Translation Extension: tried to clean a non-valid case. Please copy this message if you don't mind to share the website you just visited and open an issue on https://github.com/lnoss/no-google-search-translation/issues \n\n${window.location.href}\n\n${resultDiv}`, 'background: #222; color: #ff7f00');
+        if (link !== null) {
+            let oriUrl: URL = new URL(link.href);
+            let oriUrlSearchParams: URLSearchParams = new URLSearchParams(oriUrl.search);
 
+            if (oriUrlSearchParams.has("u"))
+                link.href = oriUrlSearchParams.get("u");
+            else
+                console.log(`%cNo Google Search Translation Extension: didn't find the original URL. Please copy this message if you don't mind to share the website you just visited and open an issue on https://github.com/lnoss/no-google-search-translation/issues \n\n${window.location.href}\n\n${resultDiv.innerHTML}`, 'background: #222; color: #ff7f00');
+                /* // I don't think we need to do this
+                let newUrlSearchParams: URLSearchParams = new URLSearchParams(new URL(oriUrlSearchParams.get("u")).search);
+                for (const [key, value] of oriUrlSearchParams.entries()) {
+                    // We want to keep the original URL search parameters, but not the Google Translate ones.
+                    if (key !== "hl" && key !== "sl" && key !== "tl" && key !== "client") {
+                        newUrlSearchParams.set(key, value);
+                    }
+                }
+                */
+        } else {
+            console.log(`%cNo Google Search Translation Extension: tried to clean a non-valid case. Please copy this message if you don't mind to share the website you just visited and open an issue on https://github.com/lnoss/no-google-search-translation/issues \n\n${window.location.href}\n\n${resultDiv.innerHTML}`, 'background: #222; color: #ff7f00');
+        }
         resolve();
     });
 }
