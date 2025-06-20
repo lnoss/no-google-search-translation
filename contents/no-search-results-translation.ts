@@ -192,46 +192,61 @@ export const config: PlasmoCSConfig = {
         "*://www.google.cat/search*"
     ],
 }
-
 const cleanResult = (resultDiv: HTMLDivElement): Promise<void> => {
     return new Promise<void>((resolve) => {
         // For .ub-button, see #1.
-        const seeOriginalButton: HTMLSpanElement = resultDiv.querySelector<HTMLSpanElement>('span[role=button][tabindex="0"]:not([aria-label="Fermer"]):not(.ub-button)');
+        const seeOriginalButton: HTMLSpanElement = resultDiv.querySelector('span.i2L09e.WHcndc[jsaction="YjLrZe"][role="button"]');
+
 
         /* A div added between "normal" results lines. If there is no button, nothing to do. 
         But if there is one, it will always be a result line. 
         There is a span before with a text like "Translated by Google". */
-        if (seeOriginalButton === null || !seeOriginalButton.previousElementSibling?.textContent.includes("Google"))
+        if (
+            seeOriginalButton === null ||
+            !(seeOriginalButton.previousElementSibling?.textContent ?? "").includes("Google")
+        ) {
+            resolve();
             return;
+        }
 
         // Fire click event to see the original result.
         seeOriginalButton.click();
 
-        // Chasing the parent div four levels up. Beautiful, isn't it?
-        const translationDiv: HTMLDivElement = seeOriginalButton.parentElement.parentElement.parentElement.parentElement as HTMLDivElement;
-        translationDiv.style.display = "none"; // Better than playing with DOM performance wise, I guess. Removing it would avoid any possible reclick on the button.
+        // Chasing the parent div four levels up. Beautiful, isn't it
+        
+        const translationDiv: HTMLDivElement = resultDiv.querySelector('div.nlNnsd.ApHyTb[jscontroller="Vxh2ib"]');
 
+        if (translationDiv) {
+            // Hiding the element is more efficient than removing it from the DOM. Removing it would also prevent any possible reclick on the button.
+            translationDiv.style.display = "none";
+        }
+        
         // Google rewrite the URL to use their Google Translate proxy (AMP little brother).
-        const link: HTMLAnchorElement = resultDiv.querySelector<HTMLAnchorElement>('a[href^="https://translate.google.com/translate?"]');
+        const link: HTMLAnchorElement = resultDiv.querySelector('a.zReHs[jsname="UWckNb"][href^="https://translate.google.com/translate?"]');
 
         // Not good if we are here without a found link. There is a span before with a text like "Translated by Google".
         if (link !== null) {
             let oriUrl: URL = new URL(link.href);
             let oriUrlSearchParams: URLSearchParams = new URLSearchParams(oriUrl.search);
 
-            if (oriUrlSearchParams.has("u"))
-                link.href = oriUrlSearchParams.get("u");
-            else
-                console.log(`%cNo Google Search Translation Extension: didn't find the original URL. Please copy this message if you don't mind to share the website you just visited and open an issue on https://github.com/lnoss/no-google-search-translation/issues \n\n${window.location.href}\n\n${resultDiv.innerHTML}`, 'background: #222; color: #ff7f00');
-                /* // I don't think we need to do this
-                let newUrlSearchParams: URLSearchParams = new URLSearchParams(new URL(oriUrlSearchParams.get("u")).search);
-                for (const [key, value] of oriUrlSearchParams.entries()) {
-                    // We want to keep the original URL search parameters, but not the Google Translate ones.
-                    if (key !== "hl" && key !== "sl" && key !== "tl" && key !== "client") {
-                        newUrlSearchParams.set(key, value);
-                    }
+            if (oriUrlSearchParams.has("u")) {
+                const originalUrl = oriUrlSearchParams.get("u");
+                if (originalUrl !== "") {
+                    link.href = originalUrl;
+                } else {
+                    console.log(`%cNo Google Search Translation Extension: didn't find the original URL. Please copy this message if you don't mind to share the website you just visited and open an issue on https://github.com/lnoss/no-google-search-translation/issues \n\n${window.location.href}\n\n${resultDiv.innerHTML}`, 'background: #222; color: #ff7f00');
                 }
-                */
+            }
+
+            /* // I don't think we need to do this
+            let newUrlSearchParams: URLSearchParams = new URLSearchParams(new URL(oriUrlSearchParams.get("u")).search);
+            for (const [key, value] of oriUrlSearchParams.entries()) {
+                // We want to keep the original URL search parameters, but not the Google Translate ones.
+                if (key !== "hl" && key !== "sl" && key !== "tl" && key !== "client") {
+                    newUrlSearchParams.set(key, value);
+                }
+            }
+            */
         } else {
             console.log(`%cNo Google Search Translation Extension: tried to clean a non-valid case. Please copy this message if you don't mind to share the website you just visited and open an issue on https://github.com/lnoss/no-google-search-translation/issues \n\n${window.location.href}\n\n${resultDiv.innerHTML}`, 'background: #222; color: #ff7f00');
         }
@@ -239,9 +254,9 @@ const cleanResult = (resultDiv: HTMLDivElement): Promise<void> => {
     });
 }
 
-const observer: MutationObserver = new MutationObserver((mutations: MutationRecord[]) => {
+const observer: MutationObserver = new MutationObserver(async (mutations: MutationRecord[]) => {
     for (const mutation of mutations) {
-         // https://developer.mozilla.org/en-US/docs/Web/API/MutationRecord/type
+        // https://developer.mozilla.org/en-US/docs/Web/API/MutationRecord/type
         if (mutation.type !== 'childList') {
             continue;
         }
@@ -254,12 +269,10 @@ const observer: MutationObserver = new MutationObserver((mutations: MutationReco
             if (addedNode.id.startsWith("arc-srp_")) {
                 // The div is lazy loading, we have to clean it later.
                 if (addedNode.innerHTML === "") {
-                    let specializedObserver: MutationObserver = new MutationObserver((mutations: MutationRecord[], observer: MutationObserver) => {
-                        // Check both class sets using getElementsByClassName
-                        Array.from(addedNode.getElementsByClassName(originalClassesFinding))
-                            .forEach(async (resultDiv) => cleanResult(resultDiv as HTMLDivElement));
-                        Array.from(addedNode.getElementsByClassName(newClassesFinding))
-                            .forEach(async (resultDiv) => cleanResult(resultDiv as HTMLDivElement));
+                    let specializedObserver: MutationObserver = new MutationObserver(async (mutations: MutationRecord[], observer: MutationObserver) => {
+                        await Promise.all(
+                            Array.from(addedNode.querySelectorAll<HTMLDivElement>('div.MjjYud')).map(resultDiv => cleanResult(resultDiv))
+                        );
 
                         observer.disconnect();
                     });
@@ -268,10 +281,9 @@ const observer: MutationObserver = new MutationObserver((mutations: MutationReco
                 }
 
                 // Check both class sets for immediate results using getElementsByClassName
-                Array.from(addedNode.getElementsByClassName(originalClassesFinding))
-                    .forEach((resultDiv) => cleanResult(resultDiv as HTMLDivElement));
-                Array.from(addedNode.getElementsByClassName(newClassesFinding))
-                    .forEach((resultDiv) => cleanResult(resultDiv as HTMLDivElement));
+                await Promise.all(
+                    Array.from(addedNode.querySelectorAll<HTMLDivElement>('div.MjjYud')).map(resultDiv => cleanResult(resultDiv))
+                );
             }
         }
     }
@@ -288,16 +300,24 @@ but the fetched results themselves are added with some pagination system:
 
 /* We might need to select `div#botstuff div[id^="arc-srp_"] > div > div[class]:not([id]):not(.arc-npt)` too.
 I am not sure if the observer will always catch in time the new results if scrolling down too quickly. */
-const originalClassesFinding: string = document.querySelector<HTMLDivElement>('div#rso > div > div').classList[0];
-const originalElements = document.getElementsByClassName(`${originalClassesFinding}`);
-const originalTypedElements: HTMLDivElement[] = Array.from(originalElements) as HTMLDivElement[];
-originalTypedElements.forEach(async (resultDiv) => await cleanResult(resultDiv));
 
-// New way to find the results CSS classes since the original way is not working anymore for some (see #7)
-const newClassesFinding: string = document.querySelector<HTMLDivElement>('div#rso > div > div > div').classList.toString();
-const newElements = document.getElementsByClassName(`${newClassesFinding}`);
-const newTypedElements: HTMLDivElement[] = Array.from(newElements) as HTMLDivElement[];
-newTypedElements.forEach(async (resultDiv) => await cleanResult(resultDiv));
+const initializeTranslationCleaner = async () => {
+    const resultDivs = document.querySelectorAll<HTMLDivElement>('div.MjjYud');
+    await Promise.all(
+        Array.from(resultDivs).map(resultDiv => cleanResult(resultDiv))
+    );
 
-// We made one iteration to clean the server-side renderer results (and a bit more if the user scroll down too quickly). 
-observer.observe(document.querySelector('#botstuff'), { childList: true, subtree: true });
+    // We made one iteration to clean the server-side renderer results (and a bit more if the user scroll down too quickly). 
+    const botstuff = document.querySelector('#botstuff');
+    if (botstuff) {
+        observer.observe(botstuff, { childList: true, subtree: true });
+    }
+};
+
+if (document.readyState === "loading") {
+    window.addEventListener('DOMContentLoaded', () => {
+        initializeTranslationCleaner().catch(console.error);
+    });
+} else {
+    initializeTranslationCleaner().catch(console.error);
+}
