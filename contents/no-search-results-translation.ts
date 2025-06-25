@@ -194,16 +194,20 @@ export const config: PlasmoCSConfig = {
 }
 const cleanResult = (resultDiv: HTMLDivElement): Promise<void> => {
     return new Promise<void>((resolve) => {
-        // For .ub-button, see #1.
+        // Need to be enough strict to avoid including others original spans, or even others extensions spans like uBlacklist (see #1).
         const seeOriginalButton: HTMLSpanElement = resultDiv.querySelector('span.i2L09e.WHcndc[jsaction="YjLrZe"][role="button"]');
 
-
-        /* A div added between "normal" results lines. If there is no button, nothing to do. 
+        /* 
+        A div added between "normal" results lines. If there is no button, nothing to do. 
         But if there is one, it will always be a result line. 
-        There is a span before with a text like "Translated by Google". */
+        There is a span before with a text like "Translated by Google".
+        Checking visibility because Google Search returns two versions for some results (original result and the hidden translation),
+        even though it has decided to display only the original result.  
+        */
         if (
             seeOriginalButton === null ||
-            !(seeOriginalButton.previousElementSibling?.textContent ?? "").includes("Google")
+            !(seeOriginalButton.previousElementSibling?.textContent ?? "").includes("Google") ||
+            !seeOriginalButton.checkVisibility()
         ) {
             resolve();
             return;
@@ -213,14 +217,14 @@ const cleanResult = (resultDiv: HTMLDivElement): Promise<void> => {
         seeOriginalButton.click();
 
         // Chasing the parent div four levels up. Beautiful, isn't it
-        
+
         const translationDiv: HTMLDivElement = resultDiv.querySelector('div.nlNnsd.ApHyTb[jscontroller="Vxh2ib"]');
 
         if (translationDiv) {
             // Hiding the element is more efficient than removing it from the DOM. Removing it would also prevent any possible reclick on the button.
             translationDiv.style.display = "none";
         }
-        
+
         // Google rewrite the URL to use their Google Translate proxy (AMP little brother).
         const link: HTMLAnchorElement = resultDiv.querySelector('a.zReHs[jsname="UWckNb"][href^="https://translate.google.com/translate?"]');
 
