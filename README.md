@@ -1,10 +1,10 @@
-[![Badge Firefox]][Firefox] [![Badge Chrome]][Chrome] [![Badge Edge]][Edge] ![GitHub commits since latest release (by SemVer including pre-releases)](https://img.shields.io/github/commits-since/lnoss/no-google-search-translation/latest/master?style=for-the-badge)
+[![Badge Firefox]][Firefox] [![Badge Chrome]][Chrome] [![Badge Edge]][Edge]
 
 <p><img src="/assets/icon.png" height="64" alt="No Google Search Auto Translation Logo." title="Logo" /></p>
 
-**No Google Search Auto Translation** is a browser extension to untranslate Google Search results. It also detects and redirects away from Google Translate proxy pages, taking you directly to the original URLs.
+**No Google Search Translation** is a browser extension to untranslate Google Search results. It also detects and redirects away from Google Translate proxy pages, taking you directly to the original URLs.
 
-Pending validation for Opera. Using Edge, Brave, Vivaldi or Opera, you should be able to install it from the Chrome Webstore anyway.
+Using Edge, Brave, Vivaldi or Opera, you should be able to install it from the Chrome Webstore. Opera Store doesn't seem to want to validate the extension. 
 
 [Chrome]: https://chromewebstore.google.com/detail/no-google-search-translat/kdibhchppeokcmdamhekocbnkjkodoii
 [Badge Chrome]: https://img.shields.io/chrome-web-store/rating/kdibhchppeokcmdamhekocbnkjkodoii?label=Get%20on%20Google%20Chrome%20(Chromium)&style=for-the-badge&logo=google-chrome
@@ -12,8 +12,6 @@ Pending validation for Opera. Using Edge, Brave, Vivaldi or Opera, you should be
 [Badge Firefox]: https://img.shields.io/amo/rating/no-google-search-translation?label=Get%20on%20Firefox&style=for-the-badge&logo=firefoxbrowser
 [Edge]: https://microsoftedge.microsoft.com/addons/detail/no-google-search-translat/ldcpobigcccphnajlohdpgjadfpdmipi
 [Badge Edge]: https://img.shields.io/badge/Microsoft_Edge-Get_It-0?style=for-the-badge
-[Opera]: https://www.xxx.yz/
-[Badge Opera]: https://img.shields.io/badge/Opera-Get_It-0?style=for-the-badge&logo=safari
 
 # Showcase
 
@@ -30,7 +28,7 @@ Bonus on Firefox: it cleans the tab's navigation history to prevent the back but
 
 This feature seems to be more globaly deployed since december 2023 (at least for me and some complaints on social networks), but first occurences of the feature can be found at least in [september 2022](https://web.archive.org/web/20220918204136/https://developers.google.com/search/docs/appearance/translated-results).
 
-There is no easy way to just disable this feature, so this extension is here to help until Google provide a way to disable it.
+There is no easy way to just disable **this** feature, so this extension is here to help until Google provide a way to disable it.
 
 ## Security concerns
 
@@ -71,7 +69,7 @@ Currently, the extension is only tested on Firefox and Edge. It should work on e
 
 - `assets/` contains the extension icon and the screenshots for the README and addons stores content.
 - `background/messages/` contains the service worker handling the auto redirection;
-- `build/` contains the production build for each browser;
+- `build/` contains the production build for each browser (created automatically when using the `build` command);
 - `contents/` contains the content scripts;
 - `popup.tsx` contains the React component for the extesnion popup.
 
@@ -105,3 +103,7 @@ Some are using Google Search results (like Startpage), others build their own in
 You can also use [this user script](https://webapps.stackexchange.com/a/173236) made by David Trapp.
 
 Note that the text `Original ansehen` needs to be changed based on what language the results are translated to as stated by the user script author. Also, you might want to change the `@match` value to make it work on the Google Search domain name you use. The script is not bypassing the Google Translate proxy, so you will still be redirected to the Google Translate proxy page traducting the original page.
+
+## Switch Google Search interface main language
+
+If you don't want to use an extension or a userscript, you could switch Google Search interface main language to English by going to [settings](https://www.google.com/preferences?hl=en&lang=1) and changing the language in the "Language" section. This could prevent Google from translating the search results, but it doesn't always work from online feedback, and it forces you to use... English.
