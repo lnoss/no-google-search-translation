@@ -195,7 +195,7 @@ export const config: PlasmoCSConfig = {
 const cleanResult = (resultDiv: HTMLDivElement): Promise<void> => {
     return new Promise<void>((resolve) => {
         // Need to be enough strict to avoid including others original spans, or even others extensions spans like uBlacklist (see #1).
-        const seeOriginalButton: HTMLSpanElement = resultDiv.querySelector('span.i2L09e.WHcndc[jsaction="YjLrZe"][role="button"]');
+        const seeOriginalButton: HTMLSpanElement = resultDiv.querySelector('span[jsaction="YjLrZe"][role="button"][tabindex="0"]');
 
         /* 
         A div added between "normal" results lines. If there is no button, nothing to do. 
@@ -218,7 +218,7 @@ const cleanResult = (resultDiv: HTMLDivElement): Promise<void> => {
 
         // Chasing the parent div four levels up. Beautiful, isn't it
 
-        const translationDiv: HTMLDivElement = resultDiv.querySelector('div.nlNnsd.ApHyTb[jscontroller="Vxh2ib"]');
+        const translationDiv: HTMLDivElement = resultDiv.querySelector('div.nlNnsd.ApHyTb[jsaction="rcuQ6b:npT2md"]');
 
         if (translationDiv) {
             // Hiding the element is more efficient than removing it from the DOM. Removing it would also prevent any possible reclick on the button.
@@ -226,7 +226,7 @@ const cleanResult = (resultDiv: HTMLDivElement): Promise<void> => {
         }
 
         // Google rewrite the URL to use their Google Translate proxy (AMP little brother).
-        const link: HTMLAnchorElement = resultDiv.querySelector('a.zReHs[jsname="UWckNb"][href^="https://translate.google.com/translate?"]');
+        const link: HTMLAnchorElement = resultDiv.querySelector('a[jsname="UWckNb"][href^="https://translate.google.com/translate?"]');
 
         // Not good if we are here without a found link. There is a span before with a text like "Translated by Google".
         if (link !== null) {
@@ -238,7 +238,7 @@ const cleanResult = (resultDiv: HTMLDivElement): Promise<void> => {
                 if (originalUrl !== "") {
                     link.href = originalUrl;
                 } else {
-                    console.log(`%cNo Google Search Translation Extension: didn't find the original URL. Please copy this message if you don't mind to share the website you just visited and open an issue on https://github.com/lnoss/no-google-search-translation/issues \n\n${window.location.href}\n\n${resultDiv.innerHTML}`, 'background: #222; color: #ff7f00');
+                    console.log(`%cNo Google Search Translation Extension: didn't find the original URL. Please copy this message if you don't mind to share the website you just visited and open an issue on https://github.com/lnoss/no-google-search-translation/issues \n\n${window.location.href}\n\n${link.innerHTML}`, 'background: #222; color: #ff7f00');
                 }
             }
 
@@ -251,8 +251,6 @@ const cleanResult = (resultDiv: HTMLDivElement): Promise<void> => {
                 }
             }
             */
-        } else {
-            console.log(`%cNo Google Search Translation Extension: tried to clean a non-valid case. Please copy this message if you don't mind to share the website you just visited and open an issue on https://github.com/lnoss/no-google-search-translation/issues \n\n${window.location.href}\n\n${resultDiv.innerHTML}`, 'background: #222; color: #ff7f00');
         }
         resolve();
     });
