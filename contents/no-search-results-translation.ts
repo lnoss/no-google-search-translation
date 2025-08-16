@@ -216,8 +216,6 @@ const cleanResult = (resultDiv: HTMLDivElement): Promise<void> => {
         // Fire click event to see the original result.
         seeOriginalButton.click();
 
-        // Chasing the parent div four levels up. Beautiful, isn't it
-
         const translationDiv: HTMLDivElement = resultDiv.querySelector('div.nlNnsd.ApHyTb[jsaction="rcuQ6b:npT2md"]');
 
         if (translationDiv) {
@@ -256,66 +254,21 @@ const cleanResult = (resultDiv: HTMLDivElement): Promise<void> => {
     });
 }
 
-const observer: MutationObserver = new MutationObserver(async (mutations: MutationRecord[]) => {
-    for (const mutation of mutations) {
-        // https://developer.mozilla.org/en-US/docs/Web/API/MutationRecord/type
-        if (mutation.type !== 'childList') {
-            continue;
-        }
-
-        for (const addedNode of mutation.addedNodes) {
-            if (!(addedNode instanceof HTMLDivElement)) {
-                continue;
-            }
-
-            if (addedNode.id.startsWith("arc-srp_")) {
-                // The div is lazy loading, we have to clean it later.
-                if (addedNode.innerHTML === "") {
-                    let specializedObserver: MutationObserver = new MutationObserver(async (mutations: MutationRecord[], observer: MutationObserver) => {
-                        await Promise.all(
-                            Array.from(addedNode.querySelectorAll<HTMLDivElement>('div.MjjYud')).map(resultDiv => cleanResult(resultDiv))
-                        );
-
-                        observer.disconnect();
-                    });
-
-                    specializedObserver.observe(addedNode, { childList: true });
-                }
-
-                // Check both class sets for immediate results using getElementsByClassName
-                await Promise.all(
-                    Array.from(addedNode.querySelectorAll<HTMLDivElement>('div.MjjYud')).map(resultDiv => cleanResult(resultDiv))
-                );
-            }
-        }
-    }
-});
-
-// Original way to find the results CSS classes
-/* First selector is for the main search div results, aka. the only results servers-side rendered.
-The second selector is selecting dynamically fetched results. They are added in a parent #botstuff div,
-but the fetched results themselves are added with some pagination system:
-- the new 10 first fetched results are added in a #arc-srp_110 div;
-- then the next 10 in a #arc-srp_120 div;
-- etc.
-*/
-
-/* We might need to select `div#botstuff div[id^="arc-srp_"] > div > div[class]:not([id]):not(.arc-npt)` too.
-I am not sure if the observer will always catch in time the new results if scrolling down too quickly. */
-
+// Main function to initialize the translation cleaner
 const initializeTranslationCleaner = async () => {
-    const resultDivs = document.querySelectorAll<HTMLDivElement>('div.MjjYud');
+    /* 
+    - #rso div.wHYlTd.Ww4FFb.vt6azd.tF2Cxc.asEBEc : normal results (at the left of the page when right sidebar);
+    - #rhs div.qXbDwb : knowledge panel right sidebar (at the right of the page)
+    - #rhs div.xGj8Mb : classic right sidebar with Wikipedia snippets;
+    There is sometimes a top knowledge panel, but it is not affected by the translation for now.
+    */
+    const resultDivs : NodeListOf<HTMLDivElement> = document.querySelectorAll<HTMLDivElement>('#rso div.wHYlTd.Ww4FFb.vt6azd.tF2Cxc.asEBEc, #rhs div.xGj8Mb, #rhs div.qXbDwb');
     await Promise.all(
         Array.from(resultDivs).map(resultDiv => cleanResult(resultDiv))
     );
-
-    // We made one iteration to clean the server-side renderer results (and a bit more if the user scroll down too quickly). 
-    const botstuff = document.querySelector('#botstuff');
-    if (botstuff) {
-        observer.observe(botstuff, { childList: true, subtree: true });
-    }
 };
 
+// Event listener to run the cleaner when the DOM is fully loaded
 if (document.readyState === "loading") {
     window.addEventListener('DOMContentLoaded', () => {
         initializeTranslationCleaner().catch(console.error);
