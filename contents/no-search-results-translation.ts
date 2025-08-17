@@ -257,15 +257,23 @@ const cleanResult = (resultDiv: HTMLDivElement): Promise<void> => {
 // Main function to initialize the translation cleaner
 const initializeTranslationCleaner = async () => {
     /* 
-    - #rso div.wHYlTd.Ww4FFb.vt6azd.tF2Cxc.asEBEc : normal results (at the left of the page when right sidebar);
-    - #rhs div.qXbDwb : knowledge panel right sidebar (at the right of the page)
-    - #rhs div.xGj8Mb : classic right sidebar with Wikipedia snippets;
+    - #rso div.MjjYud : normal results lines sometimes improved (accordion or video results) on both viewports;
+    - #rhs : right sidebar (desktop only);
+        - #rhs div.qXbDwb : knowledge panel right sidebar (at the right of the page)
+        - #rhs div.xGj8Mb : classic right sidebar with Wikipedia-like snippets;
+    Same with #rso div.qXbDwb and #rso div.xGj8Mb but only on mobile (one column).
     There is sometimes a top knowledge panel, but it is not affected by the translation for now.
     */
-    const resultDivs : NodeListOf<HTMLDivElement> = document.querySelectorAll<HTMLDivElement>('#rso div.wHYlTd.Ww4FFb.vt6azd.tF2Cxc.asEBEc, #rhs div.xGj8Mb, #rhs div.qXbDwb');
-    await Promise.all(
-        Array.from(resultDivs).map(resultDiv => cleanResult(resultDiv))
-    );
+    const selectors = [
+        '#rso div.MjjYud',
+        '#rso div.xGj8Mb',
+        '#rso div.qXbDwb',
+        '#rhs div.xGj8Mb',
+        '#rhs div.qXbDwb',
+    ].join(', ');
+
+    const resultDivs = document.querySelectorAll<HTMLDivElement>(selectors);
+    await Promise.all(Array.from(resultDivs).map(cleanResult));
 };
 
 // Event listener to run the cleaner when the DOM is fully loaded
