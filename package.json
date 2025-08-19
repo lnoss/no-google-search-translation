@@ -1,8 +1,8 @@
 {
   "name": "no-google-search-translation",
   "displayName": "No Google Search Translation",
-  "version": "0.0.6",
-  "description": "Disable Google Search results auto translation feature. Auto redirect away from Google Translate proxy to the original URL page.",
+  "version": "0.0.7",
+  "description": "No Google Search Translation is a extension to untranslate Google Search results. It also detects and redirects away from Google Translate proxy pages, taking you directly to the original URLs.",
   "scripts": {
     "dev:firefox": "plasmo dev --target=firefox-mv2",
     "dev:chromium": "plasmo dev --target=chrome-mv3",
