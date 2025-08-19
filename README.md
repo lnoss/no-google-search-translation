@@ -107,3 +107,9 @@ Note that the text `Original ansehen` needs to be changed based on what language
 ## Switch Google Search interface main language
 
 If you don't want to use an extension or a userscript, you could switch Google Search interface main language to English by going to [settings](https://www.google.com/preferences?hl=en&lang=1) and changing the language in the "Language" section. This could prevent Google from translating the search results, but it doesn't always work from online feedback, and it forces you to use... English.
+
+# Untranslate more!
+
+Since automated translations are spreading like wildfire, here is a list of extensions offering similar functionality on other well-known web services:
+- [redditUntranslate](https://github.com/SeidSmatti/redditUntranslate);
+- [YouTube No Translation](https://github.com/YouG-o/YouTube_No_Translation) or [YouTube Anti Translate](https://github.com/zpix1/yt-anti-translate).
