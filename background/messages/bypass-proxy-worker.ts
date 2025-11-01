@@ -1,13 +1,12 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 
-const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
-    var browser: any = browser || chrome;
-    const url: string = req.body.baseURI;
+const handler: PlasmoMessaging.MessageHandler<{ baseURI: string }, { success: boolean, error?: string }> = async (req, res) => {
+    const browser = globalThis.browser || globalThis.chrome;
+    const url = req.body.baseURI?.trim();
 
-    // I don't know exactly JavaScript's truthy and falsy values, so be explicit is the way.
-    if (url === undefined || url === null || url === "") {
-        res.send({ body: "nourl" });
-        return; // If it will eventually happen, it will be a bug. Or at least we hope...
+    if (!url) {
+        res.send({ success: false, error: "No URL provided" });
+        return;
     }
 
     /* browser object is standard, but Google (and Chromium world) doesn't like it.
@@ -16,16 +15,16 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
     https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/update#loadreplace
     */
     try {
-        if (process.env.PLASMO_BROWSER === "firefox")
-            browser.tabs.update({ url: url, loadReplace: true }); // We are replacing the Google Translate proxy URL by the original URL in tab's navigation history.
-        else
-            browser.tabs.update({ url: url });
-    } catch (e: any) {
-        res.send({ body: e });
-        return;
+        if (process.env.PLASMO_BROWSER === "firefox") {
+            await browser.tabs.update({ url, loadReplace: true }); // We are replacing the Google Translate proxy URL by the original URL in tab's navigation history.
+        } else {
+            await browser.tabs.update({ url });
+        }
+        res.send({ success: true });
+    } catch (e) {
+        console.error("Failed to update tab URL:", e);
+        res.send({ success: false, error: e.message || "Unknown error" });
     }
-
-    res.send({ body: "ok" });
 }
 
 export default handler;
