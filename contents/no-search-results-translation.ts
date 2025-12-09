@@ -1,6 +1,8 @@
-// Don’t be evil.
+// Don't be evil.
 
 import type { PlasmoCSConfig } from "plasmo"
+import { sendToBackground } from "@plasmohq/messaging";
+import type { VideoResolutionResponse } from "../types/video-resolver";
 
 export const config: PlasmoCSConfig = {
     matches: ["*://www.google.com/search*",
@@ -192,6 +194,12 @@ export const config: PlasmoCSConfig = {
         "*://www.google.cat/search*"
     ],
 }
+/**
+ * Cleans a single search result by removing Google Search translation "overlay"
+ * and restoring the original content and URLs
+ * @param resultDiv - The DOM element containing the search result to clean
+ * @returns Promise that resolves when the result has been processed
+ */
 const cleanResult = (resultDiv: HTMLDivElement): Promise<void> => {
     return new Promise<void>((resolve) => {
         // Need to be enough strict to avoid including others original spans, or even others extensions spans like uBlacklist (see #1).
@@ -254,9 +262,141 @@ const cleanResult = (resultDiv: HTMLDivElement): Promise<void> => {
     });
 }
 
-// Main function to initialize the translation cleaner
+
+/**
+ * Validates and extracts video ID from URL parameters
+ * @returns The video ID or null if invalid
+ */
+const extractVideoId = (yTurlSearchParams: string): string | null => {
+    try {
+        const urlParams = new URLSearchParams(yTurlSearchParams);
+        const videoId = urlParams.get("v");
+
+        return videoId;
+    } catch (error) {
+        console.warn('Failed to extract video ID from URL:', error);
+        return null;
+    }
+};
+
+/**
+ * Processes a single video result to remove translation and resolve with original title
+ * @param resultDiv - The DOM element containing the video result
+ */
+const cleanVideoResult = async (resultDiv: HTMLDivElement): Promise<void> => {
+    try {
+        if (resultDiv.hasAttribute('ngst-result-processed')) {
+            return;
+        }
+
+        resultDiv.setAttribute('ngst-result-processed', 'true');
+
+        const videoContainer = resultDiv.querySelector<HTMLDivElement>('div.WVV5ke');
+        const videoUrl = videoContainer?.dataset.curl;
+
+        if (!videoUrl) {
+            return;
+        }
+
+        const videoUrlObject = new URL(videoUrl);
+        let hostname: string;
+        try {
+            hostname = videoUrlObject.hostname;
+        } catch (error) {
+            console.warn('Invalid video URL format:', videoUrl, error);
+            return;
+        }
+
+        if (hostname !== 'www.youtube.com') {
+            return;
+        }
+
+        const videoId = extractVideoId(videoUrlObject.search);
+        if (!videoId) {
+            return;
+        }
+
+        try {
+            const result: VideoResolutionResponse = await sendToBackground({
+                name: "youtube-resolver-worker",
+                body: { ytId: videoId }
+            });
+
+            if (!result.success) {
+                console.warn('youtube-resolver-worker - returned unsuccessful result:', result.error);
+                return;
+            }
+
+            if (result.originalTitle) {
+                console.debug(`youtube-resolver-worker - successfully resolved yTvideo ${videoId}:`, result.originalTitle);
+
+                const titleElement = resultDiv.querySelector('h3.LC20lb.MBeuO.DKV0Md');
+                if (titleElement) {
+                    titleElement.textContent = result.originalTitle;
+                }
+
+                const titleSpan = resultDiv.querySelector('span.cHaqb.QOGdqf');
+                if (titleSpan) {
+                    titleSpan.textContent = result.originalTitle;
+                }
+            }
+
+        } catch (error) {
+            console.error('youtube-resolver-worker - failed to send video data to background worker:', error);
+        }
+    } catch (error) {
+        console.error('Unexpected error in cleanVideoResult:', error);
+    }
+};
+
+/**
+ * Sets up a MutationObserver to handle dynamically loaded content
+ * Needed for infinite scroll results loading in #botstuff
+ * @returns The MutationObserver instance for potential cleanup
+ */
+const setupMutationObserver = () => {
+    const observer = new MutationObserver((mutations) => {
+        const videoResultsToProcess: HTMLDivElement[] = [];
+
+        mutations.forEach((mutation) => {
+            mutation.addedNodes.forEach((node) => {
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                    const element = node as Element;
+
+                    const videoResults = element.querySelectorAll<HTMLDivElement>(
+                        '#rso div.PmEWq.wHYlTd.vt6azd.Ww4FFb, #botstuff div.PmEWq.wHYlTd.vt6azd.Ww4FFb'
+                    );
+
+                    videoResults.forEach((result) => {
+                        if (!result.hasAttribute('ngst-result-processed')) {
+                            videoResultsToProcess.push(result);
+                        }
+                    });
+                }
+            });
+        });
+
+        if (videoResultsToProcess.length > 0) {
+            videoResultsToProcess.forEach((result) => {
+                cleanVideoResult(result).catch(console.error);
+            });
+        }
+    });
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
+    return observer;
+};
+
+/**
+ * Main function to initialize the translation cleaner
+ * Handles both regular search results and video results
+ */
 const initializeTranslationCleaner = async () => {
-    /* 
+    /* Results untranslation
     - #rso div.MjjYud : normal results lines sometimes improved (accordion or video results) on both viewports;
     - #rhs : right sidebar (desktop only);
         - #rhs div.qXbDwb : knowledge panel right sidebar (at the right of the page)
@@ -264,7 +404,7 @@ const initializeTranslationCleaner = async () => {
     Same with #rso div.qXbDwb and #rso div.xGj8Mb but only on mobile (one column).
     There is sometimes a top knowledge panel, but it is not affected by the translation for now.
     */
-    const selectors = [
+    const resultsSelectors = [
         '#rso div.MjjYud',
         '#rso div.xGj8Mb',
         '#rso div.qXbDwb',
@@ -272,8 +412,24 @@ const initializeTranslationCleaner = async () => {
         '#rhs div.qXbDwb',
     ].join(', ');
 
-    const resultDivs = document.querySelectorAll<HTMLDivElement>(selectors);
-    await Promise.all(Array.from(resultDivs).map(cleanResult));
+    const resultsDivs = document.querySelectorAll<HTMLDivElement>(resultsSelectors);
+    await Promise.all(Array.from(resultsDivs).map(cleanResult));
+
+    /* Video results untranslation
+    - #rso div.sHEJob : featured videos on default results view
+    - #rso div.PmEWq.wHYlTd.vt6azd.Ww4FFb: video focus results (udm=7 ; Unified Data Model id for videos)
+    - #botstuff div.PmEWq.wHYlTd.vt6azd.Ww4FFb: infinite results by scrolling (udm=7)
+    */
+    const videosResultsSelectors = [
+        '#rso div.sHEJob',
+        '#rso div.PmEWq.wHYlTd.vt6azd.Ww4FFb',
+        '#botstuff div.PmEWq.wHYlTd.vt6azd.Ww4FFb'
+    ].join(', ');
+
+    const resultVideoDivs = document.querySelectorAll<HTMLDivElement>(videosResultsSelectors);
+    await Promise.all(Array.from(resultVideoDivs).map(cleanVideoResult));
+
+    setupMutationObserver();
 };
 
 // Event listener to run the cleaner when the DOM is fully loaded
