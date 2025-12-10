@@ -1,6 +1,7 @@
 // Don't be evil.
 
 import type { PlasmoCSConfig } from "plasmo"
+import { Storage } from "@plasmohq/storage"
 import { sendToBackground } from "@plasmohq/messaging";
 import type { VideoResolutionResponse } from "../types/video-resolver";
 
@@ -289,6 +290,14 @@ const cleanVideoResult = async (resultDiv: HTMLDivElement): Promise<void> => {
             return;
         }
 
+        // Check if fetchYouTubeOriginalTitles setting is enabled
+        const storage = new Storage({ area: "sync" });
+        const fetchYouTubeOriginalTitles = await storage.get<boolean>("fetchYouTubeOriginalTitles");
+        
+        if (!fetchYouTubeOriginalTitles) {
+            return;
+        }
+
         resultDiv.setAttribute('ngst-result-processed', 'true');
 
         const videoContainer = resultDiv.querySelector<HTMLDivElement>('div.WVV5ke');
@@ -364,7 +373,7 @@ const setupMutationObserver = () => {
                     const element = node as Element;
 
                     const videoResults = element.querySelectorAll<HTMLDivElement>(
-                        '#rso div.PmEWq.wHYlTd.vt6azd.Ww4FFb, #botstuff div.PmEWq.wHYlTd.vt6azd.Ww4FFb'
+                        '#botstuff div.PmEWq.wHYlTd.vt6azd.Ww4FFb'
                     );
 
                     videoResults.forEach((result) => {
@@ -377,8 +386,16 @@ const setupMutationObserver = () => {
         });
 
         if (videoResultsToProcess.length > 0) {
-            videoResultsToProcess.forEach((result) => {
-                cleanVideoResult(result).catch(console.error);
+            // Check if fetchYouTubeOriginalTitles setting is enabled
+            const storage = new Storage({ area: "sync" });
+            storage.get<boolean>("fetchYouTubeOriginalTitles").then(fetchYouTubeOriginalTitles => {
+                if (fetchYouTubeOriginalTitles) {
+                    videoResultsToProcess.forEach((result) => {
+                        cleanVideoResult(result).catch(console.error);
+                    });
+                }
+            }).catch(error => {
+                console.warn('Failed to get fetchYouTubeOriginalTitles setting:', error);
             });
         }
     });
@@ -422,14 +439,23 @@ const initializeTranslationCleaner = async () => {
     */
     const videosResultsSelectors = [
         '#rso div.sHEJob',
-        '#rso div.PmEWq.wHYlTd.vt6azd.Ww4FFb',
-        '#botstuff div.PmEWq.wHYlTd.vt6azd.Ww4FFb'
+        '#rso div.PmEWq.wHYlTd.vt6azd.Ww4FFb'
     ].join(', ');
 
     const resultVideoDivs = document.querySelectorAll<HTMLDivElement>(videosResultsSelectors);
-    await Promise.all(Array.from(resultVideoDivs).map(cleanVideoResult));
+    
+    // Check if fetchYouTubeOriginalTitles setting is enabled
+    const storage = new Storage({ area: "sync" });
+    const fetchYouTubeOriginalTitles = await storage.get<boolean>("fetchYouTubeOriginalTitles");
+    
+    if (fetchYouTubeOriginalTitles) {
+        await Promise.all(Array.from(resultVideoDivs).map(cleanVideoResult));
+    }
 
-    setupMutationObserver();
+    // Only for video results tab
+    if (window.location.search.includes('udm=7')) {
+        setupMutationObserver();
+    }
 };
 
 // Event listener to run the cleaner when the DOM is fully loaded

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { Storage } from "@plasmohq/storage"
 
-function IndexPopup() {
+function IndexOptions() {
   const [fetchYouTubeOriginalTitles, setFetchYouTubeOriginalTitles] = useState<boolean>(true)
   const storage = new Storage({ area: "sync" })
 
@@ -23,7 +23,7 @@ function IndexPopup() {
     <html lang="en">
       <head>
         <meta charSet="UTF-8" />
-        <title>No Google Search Auto Translation</title>
+        <title>No Google Search Translation - Settings</title>
         <style>
           {`
             :root {
@@ -51,10 +51,10 @@ function IndexPopup() {
               padding: 0;
             }
             main {
-              padding: 1rem;
+              padding: 1rem 2rem;
             }
             h1 {
-              margin: 0 0 1rem 0;
+              margin-bottom: 1rem;
             }
             p {
               font-size: 14px;
@@ -97,12 +97,7 @@ function IndexPopup() {
       </head>
       <body>
         <main>
-          <h1>No Google Search Translation</h1>
-          <p>This extension disables the auto translation feature of Google Search results and redirects from Google Translate proxy pages to the original URLs.</p>
-          <p>If not working, please check that you've approved the necessary permissions in your browser's extension settings. <small>Check help pages for <a href="https://support.mozilla.org/en-US/kb/manage-optional-permissions-extensions">Firefox</a> and <a href="https://support.google.com/chrome_webstore/answer/2664769">Chrome</a></small>.</p>
-          <p>Any requests, feedback, or bug reports can be shared on <a href="https://github.com/lnoss/no-google-search-translation/">GitHub</a>.</p>
-
-          <h2>Settings</h2>
+          <h1>Settings</h1>
           <div className="settings-section">
             <div className="checkbox-container">
               <input
@@ -112,8 +107,8 @@ function IndexPopup() {
                 onChange={handleCheckboxChange}
               />
               <label htmlFor="fetchYouTubeOriginalTitles" className="checkbox-label">
-                <strong>Resolve YouTube videos titles</strong><br />
-                Enable to retrieve and display the original titles of YouTube videos instead of translated ones. <small>For each video found in Google Search results, a request is made to YouTube.com.</small>
+                <strong>Fetch YouTube Original Titles</strong><br />
+                Enable to retrieve and display the original titles of YouTube videos instead of translated ones. <small>For each video found in Google Search results, a request is made to YouTube.com</small>.
               </label>
             </div>
           </div>
@@ -123,4 +118,4 @@ function IndexPopup() {
   )
 }
 
-export default IndexPopup;
+export default IndexOptions
