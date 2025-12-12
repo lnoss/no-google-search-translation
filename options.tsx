@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { Storage } from "@plasmohq/storage"
+import iconImage from "data-base64:~assets/icon.png"
 
 function IndexOptions() {
   const [fetchYouTubeOriginalTitles, setFetchYouTubeOriginalTitles] = useState<boolean>(true)
@@ -39,19 +40,25 @@ function IndexOptions() {
             html {
               margin: 0;
               padding: 0;
+              min-height: 100vh;
             }
             body {
               font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
               font-size: 13px;
               line-height: 1.5;
-              width: 340px;
+              max-width: 600px;
+              width: 90%;
               color: var(--text-color);
               background-color: var(--bg-color);
-              margin: 0;
+              margin: 0 auto;
               padding: 0;
+              min-height: 100vh;
+              display: flex;
+              justify-content: center;
             }
             main {
               padding: 1rem 2rem;
+              width: 100%;
             }
             h1 {
               margin-bottom: 1rem;
@@ -92,12 +99,29 @@ function IndexOptions() {
                 color: #4dabff;
               }
             }
+            .header {
+              display: flex;
+              align-items: center;
+              gap: 0.5rem;
+              margin-bottom: 1.5rem;
+            }
+            .header-icon {
+              width: 32px;
+              height: 32px;
+            }
+            .header-title {
+              margin: 0;
+            }
           `}
         </style>
       </head>
       <body>
         <main>
-          <h1>Settings</h1>
+          <div className="header">
+            <img src={iconImage} alt="Extension icon" className="header-icon" />
+            <h1 className="header-title">No Google Search Translation</h1>
+          </div>
+          <h2>Settings</h2>
           <div className="settings-section">
             <div className="checkbox-container">
               <input
@@ -107,7 +131,7 @@ function IndexOptions() {
                 onChange={handleCheckboxChange}
               />
               <label htmlFor="fetchYouTubeOriginalTitles" className="checkbox-label">
-                <strong>Fetch YouTube Original Titles</strong><br />
+                <strong>Resolve YouTube videos titles</strong><br />
                 Enable to retrieve and display the original titles of YouTube videos instead of translated ones. <small>For each video found in Google Search results, a request is made to YouTube.com</small>.
               </label>
             </div>
