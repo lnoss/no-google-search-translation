@@ -238,7 +238,8 @@
       "*://www.google.co.za/search*",
       "*://www.google.co.zm/search*",
       "*://www.google.co.zw/search*",
-      "*://www.google.cat/search*"
+      "*://www.google.cat/search*",
+      "*://www.youtube.com/oembed"
     ]
   },
   "options_ui": {
