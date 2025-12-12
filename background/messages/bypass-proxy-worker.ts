@@ -1,8 +1,8 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 
 const handler: PlasmoMessaging.MessageHandler<{ baseURI: string }, { success: boolean, error?: string }> = async (req, res) => {
-    const browser = globalThis.browser || globalThis.chrome;
-    const url = req.body.baseURI?.trim();
+    const browser: any = (globalThis as any).browser || (globalThis as any).chrome;
+    const url: string = req.body.baseURI?.trim();
 
     if (!url) {
         res.send({ success: false, error: "No URL provided" });
