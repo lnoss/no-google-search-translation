@@ -4,6 +4,9 @@ import type { PlasmoCSConfig } from "plasmo"
 import { Storage } from "@plasmohq/storage"
 import { sendToBackground } from "@plasmohq/messaging";
 import type { VideoResolutionResponse } from "../types/video-resolver";
+import type { CheckYouTubePermissionResponse } from "../types/youtube-permission";
+
+const browser = (globalThis as any).browser || (globalThis as any).chrome;
 
 export const config: PlasmoCSConfig = {
     matches: ["*://www.google.com/search*",
@@ -270,13 +273,29 @@ const cleanResult = (resultDiv: HTMLDivElement): Promise<void> => {
  */
 const extractVideoId = (yTurlSearchParams: string): string | null => {
     try {
-        const urlParams = new URLSearchParams(yTurlSearchParams);
-        const videoId = urlParams.get("v");
+        const urlParams: URLSearchParams = new URLSearchParams(yTurlSearchParams);
+        const videoId: string = urlParams.get("v");
 
         return videoId;
     } catch (error) {
         console.warn('Failed to extract video ID from URL:', error);
         return null;
+    }
+};
+
+/**
+ * Checks if the user has granted permission for YouTube video untranslation
+ * @returns Promise that resolves to true if permission is granted
+ */
+const checkYouTubeVideoPermission = async (): Promise<boolean> => {
+    try {
+        const response: CheckYouTubePermissionResponse = await sendToBackground({
+            name: "check-youtube-permission"
+        });
+        return response.hasPermission;
+    } catch (error) {
+        console.warn('Failed to check YouTube video permission:', error);
+        return false;
     }
 };
 
@@ -290,18 +309,22 @@ const cleanVideoResult = async (resultDiv: HTMLDivElement): Promise<void> => {
             return;
         }
 
-        // Check if fetchYouTubeOriginalTitles setting is enabled
-        const storage = new Storage({ area: "sync" });
-        const fetchYouTubeOriginalTitles = await storage.get<boolean>("fetchYouTubeOriginalTitles");
-        
+        const hasPermission = await checkYouTubeVideoPermission();
+        if (!hasPermission) {
+            return;
+        }
+
+        const storage: Storage = new Storage({ area: "sync" });
+        const fetchYouTubeOriginalTitles: boolean = await storage.get<boolean>("fetchYouTubeOriginalTitles");
+
         if (!fetchYouTubeOriginalTitles) {
             return;
         }
 
         resultDiv.setAttribute('ngst-result-processed', 'true');
 
-        const videoContainer = resultDiv.querySelector<HTMLDivElement>('div.WVV5ke');
-        const videoUrl = videoContainer?.dataset.curl;
+        const videoAnchor: HTMLLinkElement = resultDiv.querySelector<HTMLLinkElement>('a[href^="https://www.youtube.com/watch?v="]');
+        const videoUrl: string = videoAnchor?.href;
 
         if (!videoUrl) {
             return;
@@ -364,7 +387,7 @@ const cleanVideoResult = async (resultDiv: HTMLDivElement): Promise<void> => {
  * @returns The MutationObserver instance for potential cleanup
  */
 const setupMutationObserver = () => {
-    const observer = new MutationObserver((mutations) => {
+    const observer: MutationObserver = new MutationObserver((mutations) => {
         const videoResultsToProcess: HTMLDivElement[] = [];
 
         mutations.forEach((mutation) => {
@@ -386,16 +409,23 @@ const setupMutationObserver = () => {
         });
 
         if (videoResultsToProcess.length > 0) {
-            // Check if fetchYouTubeOriginalTitles setting is enabled
-            const storage = new Storage({ area: "sync" });
-            storage.get<boolean>("fetchYouTubeOriginalTitles").then(fetchYouTubeOriginalTitles => {
-                if (fetchYouTubeOriginalTitles) {
-                    videoResultsToProcess.forEach((result) => {
-                        cleanVideoResult(result).catch(console.error);
-                    });
+            checkYouTubeVideoPermission().then(hasPermission => {
+                if (!hasPermission) {
+                    return;
                 }
+                
+                const storage = new Storage({ area: "sync" });
+                storage.get<boolean>("fetchYouTubeOriginalTitles").then(fetchYouTubeOriginalTitles => {
+                    if (fetchYouTubeOriginalTitles) {
+                        videoResultsToProcess.forEach((result) => {
+                            cleanVideoResult(result).catch(console.error);
+                        });
+                    }
+                }).catch(error => {
+                    console.warn('Failed to get fetchYouTubeOriginalTitles setting:', error);
+                });
             }).catch(error => {
-                console.warn('Failed to get fetchYouTubeOriginalTitles setting:', error);
+                console.warn('Failed to check YouTube video permission:', error);
             });
         }
     });
@@ -429,7 +459,7 @@ const initializeTranslationCleaner = async () => {
         '#rhs div.qXbDwb',
     ].join(', ');
 
-    const resultsDivs = document.querySelectorAll<HTMLDivElement>(resultsSelectors);
+    const resultsDivs: NodeListOf<HTMLDivElement> = document.querySelectorAll<HTMLDivElement>(resultsSelectors);
     await Promise.all(Array.from(resultsDivs).map(cleanResult));
 
     /* Video results untranslation
@@ -442,12 +472,16 @@ const initializeTranslationCleaner = async () => {
         '#rso div.PmEWq.wHYlTd.vt6azd.Ww4FFb'
     ].join(', ');
 
-    const resultVideoDivs = document.querySelectorAll<HTMLDivElement>(videosResultsSelectors);
-    
-    // Check if fetchYouTubeOriginalTitles setting is enabled
-    const storage = new Storage({ area: "sync" });
-    const fetchYouTubeOriginalTitles = await storage.get<boolean>("fetchYouTubeOriginalTitles");
-    
+    const resultVideoDivs: NodeListOf<HTMLDivElement> = document.querySelectorAll<HTMLDivElement>(videosResultsSelectors);
+
+    const hasPermission = await checkYouTubeVideoPermission();
+    if (!hasPermission) {
+        return;
+    }
+
+    const storage: Storage = new Storage({ area: "sync" });
+    const fetchYouTubeOriginalTitles: boolean = await storage.get<boolean>("fetchYouTubeOriginalTitles");
+
     if (fetchYouTubeOriginalTitles) {
         await Promise.all(Array.from(resultVideoDivs).map(cleanVideoResult));
     }
@@ -466,3 +500,4 @@ if (document.readyState === "loading") {
 } else {
     initializeTranslationCleaner().catch(console.error);
 }
+

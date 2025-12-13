@@ -2,22 +2,26 @@ import { useState, useEffect } from "react"
 import { Storage } from "@plasmohq/storage"
 
 function IndexPopup() {
-  const [fetchYouTubeOriginalTitles, setFetchYouTubeOriginalTitles] = useState<boolean>(true)
-  const storage = new Storage({ area: "sync" })
+  const [fetchYouTubeOriginalTitles, setFetchYouTubeOriginalTitles] = useState<boolean>(true);
+  const storage = new Storage({ area: "sync" });
 
   useEffect(() => {
     storage.get<boolean>("fetchYouTubeOriginalTitles").then(saved => {
-      if (saved !== null) {
-        setFetchYouTubeOriginalTitles(saved)
+      if (saved !== null && saved !== undefined) {
+        setFetchYouTubeOriginalTitles(saved);
       }
+    }).catch(error => {
+      console.warn("Failed to load saved settings:", error);
     })
   }, [])
 
   const handleCheckboxChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const checked: boolean = event.target.checked
-    setFetchYouTubeOriginalTitles(checked)
-    await storage.set("fetchYouTubeOriginalTitles", checked)
+    const checked: boolean = event.target.checked;
+    setFetchYouTubeOriginalTitles(checked);
+    await storage.set("fetchYouTubeOriginalTitles", checked);
   }
+
+
 
   return (
     <html lang="en">
@@ -29,6 +33,7 @@ function IndexPopup() {
             :root {
               --text-color: #333;
               --bg-color: #fff;
+              width: 340px;
             }
             @media (prefers-color-scheme: dark) {
               :root {
