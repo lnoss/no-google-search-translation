@@ -20,10 +20,10 @@ jobs:
       - uses: pnpm/action-setup@v4
         with:
           run_install: true
-      - name: Use Node.js 20.x LTS
+      - name: Use Node.js 22.x LTS
         uses: actions/setup-node@v4
         with:
-          node-version: 20.x
+          node-version: 22.x
           cache: "pnpm"
       - name: Get current package.json version
         id: package-version
