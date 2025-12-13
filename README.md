@@ -15,7 +15,7 @@ Using Edge, Brave, Vivaldi or Opera, you should be able to install it from the C
 
 # Showcase
 
-![Screenshot of the extension in action](assets/showcase-1.jpg "Be gone Google Translated results!")
+![Screenshot of the extension in action](assets/showcase-1.webp "Be gone Google Translated results!")
 
 Bonus on Firefox: it cleans the tab's navigation history to prevent the back button to redirect you to the Google Translate proxy.
 
