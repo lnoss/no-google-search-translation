@@ -45,6 +45,11 @@
     "url": "https://github.com/lnoss/no-google-search-translation/issues"
   },
   "manifest": {
+    "browser_action": {
+      "default_icon": "/assets/icon.png",
+      "default_title": "No Google Search Translation",
+      "default_popup": "popup.html"
+    },
     "browser_specific_settings": {
       "gecko": {
         "id": "{6def1df3-6313-4648-a6ca-945b92aba510}"
