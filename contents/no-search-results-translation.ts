@@ -199,13 +199,29 @@ export const config: PlasmoCSConfig = {
     ],
 }
 /**
- * Cleans a single search result by removing Google Search translation "overlay"
- * and restoring the original content and URLs
+ * Cleans a single search result and restoring the original content and URLs
  * @param resultDiv - The DOM element containing the search result to clean
  * @returns Promise that resolves when the result has been processed
  */
 const cleanResult = (resultDiv: HTMLDivElement): Promise<void> => {
     return new Promise<void>((resolve) => {
+        // To refactor when migrating to new framework
+        const link: HTMLAnchorElement = resultDiv.querySelector('a[jsname="UWckNb"]');
+        if (link !== null) {
+            let oriUrl: URL = new URL(link.href);
+            let oriUrlSearchParams: URLSearchParams = new URLSearchParams(oriUrl.search); // lmao, I didn't know there is already a searchParams proprety
+
+            if (oriUrl.hostname == 'www.reddit.com') {
+                if (oriUrlSearchParams.has("tl")) {
+                    oriUrl.searchParams.delete("tl");
+                    link.href = oriUrl.href;
+                }
+                resolve();
+                return;
+            }
+        }
+
+
         // Need to be enough strict to avoid including others original spans, or even others extensions spans like uBlacklist (see #1).
         const seeOriginalButton: HTMLSpanElement = resultDiv.querySelector('span[jsaction="YjLrZe"][role="button"][tabindex="0"]');
 
@@ -234,9 +250,6 @@ const cleanResult = (resultDiv: HTMLDivElement): Promise<void> => {
             // Hiding the element is more efficient than removing it from the DOM. Removing it would also prevent any possible reclick on the button.
             translationDiv.style.display = "none";
         }
-
-        // Google rewrite the URL to use their Google Translate proxy (AMP little brother).
-        const link: HTMLAnchorElement = resultDiv.querySelector('a[jsname="UWckNb"][href^="https://translate.google.com/translate?"]');
 
         // Not good if we are here without a found link. There is a span before with a text like "Translated by Google".
         if (link !== null) {
@@ -413,7 +426,7 @@ const setupMutationObserver = () => {
                 if (!hasPermission) {
                     return;
                 }
-                
+
                 const storage = new Storage({ area: "sync" });
                 storage.get<boolean>("fetchYouTubeOriginalTitles").then(fetchYouTubeOriginalTitles => {
                     if (fetchYouTubeOriginalTitles) {
