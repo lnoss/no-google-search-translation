@@ -52,7 +52,12 @@
     },
     "browser_specific_settings": {
       "gecko": {
-        "id": "{6def1df3-6313-4648-a6ca-945b92aba510}"
+        "id": "{6def1df3-6313-4648-a6ca-945b92aba510}",
+        "data_collection_permissions": {
+          "required": [
+            "none"
+          ]
+        }
       }
     },
     "host_permissions": [
