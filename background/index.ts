@@ -29,10 +29,6 @@ browser.runtime.onInstalled.addListener(async (details) => {
           console.error('Failed to request YouTube oembed permission:', error);
         });
       }
-      
-      browser.tabs.create({
-        url: browser.runtime.getURL("tabs/update-notice.html")
-      });
     }
   } else {
     // For versions > 0.0.8, we ask permission only on install
@@ -46,10 +42,6 @@ browser.runtime.onInstalled.addListener(async (details) => {
           console.error('Failed to request YouTube oEmbed permission:', error);
         });
       }
-      
-      browser.tabs.create({
-        url: browser.runtime.getURL("tabs/update-notice.html")
-      });
     }
   }
 })

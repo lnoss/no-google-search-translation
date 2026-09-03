@@ -6,7 +6,7 @@ import { sendToBackground } from "@plasmohq/messaging";
 import type { VideoResolutionResponse } from "../types/video-resolver";
 import type { CheckYouTubePermissionResponse } from "../types/youtube-permission";
 
-const browser = (globalThis as any).browser || (globalThis as any).chrome;
+const BROWSER = (globalThis as any).browser || (globalThis as any).chrome;
 
 export const config: PlasmoCSConfig = {
     matches: ["*://www.google.com/search*",
@@ -452,6 +452,92 @@ const setupMutationObserver = () => {
 };
 
 /**
+ * Clicking "See original" make layout changes and can make the page scroll by
+ * itself (#44). We tried to preserver the y-scroll position, and stop as soon as the 
+ * user scrolls by himself, or when the DOM mutations are done.
+ */
+const preserveScrollPositionWhile = (action: () => void): Promise<void> => {
+    return new Promise<void>((resolve) => {
+        const DOM_SETTLE_DELAY_MS = 200; // Time without any DOM mutation after which the DOM stable
+        const DOM_SETTLE_MAX_WAIT_MS = 2000; // Maximum time to wait for the DOM to stabilize before giving up
+        const SCROLL_INTENT_KEYS = new Set([
+            "ArrowDown",
+            "ArrowUp",
+            "PageDown",
+            "PageUp",
+            "Home",
+            "End",
+            " "
+        ]);
+        const savedScrollY: number = window.scrollY;
+        let stopped = false;
+        let settleTimeoutId: number | undefined;
+        let maxWaitTimeoutId: number | undefined;
+
+        const onScroll = (): void => {
+            if (!stopped && window.scrollY !== savedScrollY) {
+                window.scrollTo(0, savedScrollY);
+            }
+        };
+
+        const stop = (restoreScroll: boolean): void => {
+            if (stopped) {
+                return;
+            }
+            stopped = true;
+            observer.disconnect();
+            clearTimeout(settleTimeoutId);
+            clearTimeout(maxWaitTimeoutId);
+            window.removeEventListener("scroll", onScroll);
+            window.removeEventListener("wheel", onUserScrollIntent, { capture: true });
+            window.removeEventListener("touchstart", onUserScrollIntent, { capture: true });
+            window.removeEventListener("keydown", onScrollIntentKey, { capture: true });
+            if (restoreScroll) {
+                window.scrollTo(0, savedScrollY);
+            }
+            resolve();
+        };
+
+        const onUserScrollIntent = (): void => {
+            stop(false);
+        };
+
+        const onScrollIntentKey = (event: KeyboardEvent): void => {
+            if (SCROLL_INTENT_KEYS.has(event.key)) {
+                stop(false);
+            }
+        };
+
+        const scheduleSettle = (): void => {
+            clearTimeout(settleTimeoutId);
+            settleTimeoutId = window.setTimeout(() => stop(true), DOM_SETTLE_DELAY_MS);
+        };
+
+        const observer: MutationObserver = new MutationObserver(scheduleSettle);
+        observer.observe(document.body, {
+            attributes: true,
+            attributeFilter: ["class", "style", "hidden"],
+            childList: true,
+            subtree: true
+        });
+
+        window.addEventListener("scroll", onScroll, { passive: true });
+        window.addEventListener("wheel", onUserScrollIntent, { passive: true, capture: true });
+        window.addEventListener("touchstart", onUserScrollIntent, { passive: true, capture: true });
+        window.addEventListener("keydown", onScrollIntentKey, { capture: true });
+
+        maxWaitTimeoutId = window.setTimeout(() => stop(true), DOM_SETTLE_MAX_WAIT_MS);
+        scheduleSettle();
+
+        try {
+            action();
+        } catch (error) {
+            console.error("No Google Search Translation Extension: failed to clean the search results:", error);
+        }
+    });
+};
+
+/**
  * Main function to initialize the translation cleaner
  * Handles both regular search results and video results
  */
@@ -472,8 +558,11 @@ const initializeTranslationCleaner = async () => {
         '#rhs div.qXbDwb',
     ].join(', ');
 
-    const resultsDivs: NodeListOf<HTMLDivElement> = document.querySelectorAll<HTMLDivElement>(resultsSelectors);
-    await Promise.all(Array.from(resultsDivs).map(cleanResult));
+    await preserveScrollPositionWhile(() => {
+        for (const resultDiv of document.querySelectorAll<HTMLDivElement>(resultsSelectors)) {
+            cleanResult(resultDiv).catch(console.error);
+        }
+    });
 
     /* Video results untranslation
     - #rso div.sHEJob : featured videos on default results view
