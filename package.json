@@ -45,10 +45,35 @@
     "url": "https://github.com/lnoss/no-google-search-translation/issues"
   },
   "manifest": {
-    "browser_action": {
-      "default_icon": "/assets/icon.png",
-      "default_title": "No Google Search Translation",
-      "default_popup": "popup.html"
+    "overrides": {
+      "chrome": {
+        "action": {
+          "default_icon": "/assets/icon.png",
+          "default_title": "No Google Search Translation",
+          "default_popup": "popup.html"
+        }
+      },
+      "edge": {
+        "action": {
+          "default_icon": "/assets/icon.png",
+          "default_title": "No Google Search Translation",
+          "default_popup": "popup.html"
+        }
+      },
+      "opera": {
+        "action": {
+          "default_icon": "/assets/icon.png",
+          "default_title": "No Google Search Translation",
+          "default_popup": "popup.html"
+        }
+      },
+      "firefox": {
+        "browser_action": {
+          "default_icon": "/assets/icon.png",
+          "default_title": "No Google Search Translation",
+          "default_popup": "popup.html"
+        }
+      }
     },
     "browser_specific_settings": {
       "gecko": {
