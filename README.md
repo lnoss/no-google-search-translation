@@ -2,7 +2,7 @@
 
 <p><img src="/assets/icon.png" height="64" alt="No Google Search Auto Translation Logo." title="Logo" /></p>
 
-**No Google Search Translation** is a browser extension to untranslate Google Search results (including YouTube videos titles). It also detects and redirects away from Google Translate proxy pages, taking you directly to the original URLs.
+**No Google Search Translation** is a browser extension to untranslate Google Search results (including YouTube videos titles). It also detects and redirects away from Google Translate proxy pages, untranslate reddit links (you still need to turn off the reddit setting), and untranslate YouTube titles.
 
 Using Edge, Brave, Vivaldi or Opera, you should be able to install it from the Chrome Webstore. Opera Store doesn't seem to want to validate the extension. 
 
